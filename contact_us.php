@@ -49,6 +49,7 @@ include 'database.php';
               </div>
 
               <form method="post">
+                
 
                 <!-- Name Input -->
                 <div class="form-floating mb-3">

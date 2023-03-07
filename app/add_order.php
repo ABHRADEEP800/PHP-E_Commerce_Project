@@ -43,8 +43,8 @@ if(isset($_SESSION['cart']))
     <link rel="stylesheet" href="asset/card.css" />
 </head>
 
-// Path: app\navbar.php
 <?php
+// include the navbar
     include 'navbar.php';
 ?>
 
@@ -56,18 +56,32 @@ if(isset($_SESSION['cart']))
             </div>
         </div>
     <div class="pt-5">
+    <form  method="POST">
         <div class="d-flex pb-3">
-            <div class="col-6 ps-3">
-                <form method="POST">
-                    <input type="text" name="search" placeholder="Search Product By Name">
-                    <button type="submit" class="btn btn-primary" name="submit_search">Search</button>
-                </form>
+            
+                <div class="col-7 d-flex">
+                    <div class="col-lg-8 col-sm-10">
+                        <input class="search_bar form-control border-end-0 border rounded-pill" type="text" name="search" placeholder="Search Product By Name">
+                    </div>
+                    <div class="col-lg-4 col-sm-2 ms-2">
+                        <button type="submit" class="btn btn-outline-secondary bg-white border-bottom-0 border rounded-pill ms-n5" name="submit-search">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            
+            <div class="col-5">
+                <!-- add product  -->
+                
+                <a href="cnf_order.php" class="btn btn-warning float-end">
+                    <i class='fa-solid fa-cart-shopping'></i>
+                    <?=$count?>
+                </a>
             </div>
-            <div class="col-6 pe-3 d-flex justify-content-end">
-            <a href='cnf_order.php' class='btn btn-warning'><i class='fa-solid fa-cart-shopping'></i> (<?=$count?>)</a>            
         </div>
-    </div>
+        </form>
 
+    <div class="table-responsive">
         <table class="table" border="1" >
             <tr>
                 <th>Product Name</th>
@@ -100,7 +114,7 @@ if(isset($_SESSION['cart']))
             if($next > $pages){ // If the current page is last page
                 $next = $pages; 
             }
-            if(isset($_POST['submit_search'])){ // If the user clicks the search button
+            if(isset($_POST['submit-search'])){ // If the user clicks the search button
                 $query = $_POST['search']; // Get the search query
                 $sql="SELECT * FROM product WHERE  product_name LIKE '%$query%' LIMIT $start, $limit"; // Search the product by name
                
@@ -123,7 +137,7 @@ if(isset($_SESSION['cart']))
                 <td><?php echo $name ?></td>
                 <td><img src="<?php echo $image ?>" width="100px">  </td>
                 <td><?php echo $description ?></td>
-                <td>₹ <?php echo $price ?></td>
+                <td>₹<?php echo $price ?></td>
                 <td><?php echo $product_quantity ?> Pcs</td>
                 <td> 
                     <button type="submit" name="Add_To_Cart" class="btn btn-warning">Add to Cart</button>
@@ -136,6 +150,7 @@ if(isset($_SESSION['cart']))
             ?>
             <!-- Pagination function added -->
         </table>
+        </div>
         <div class="d-flex">
             <div class="col-6">Showing <b><?php echo $page;?></b> out of <b><?php echo $pages;?></b> Pages</div>
             <div class="col-6 d-flex justify-content-end">

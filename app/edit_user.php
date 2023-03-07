@@ -59,7 +59,7 @@ include 'database.php'; // Include the database connection.
                     <h1 class="text-center">Edit User Data</h1>
                 </div>
                 
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">User Name</label>
                         <input type="text" name="user_name" id="form4Example1" value="<?=$name?>" class="form-control" />

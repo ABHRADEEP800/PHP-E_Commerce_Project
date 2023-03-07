@@ -47,13 +47,18 @@ include 'database.php'; // Include the database connection.
         $id=$_GET['productId'];
         $sql="SELECT * FROM product WHERE product_id=$id";
         $result=mysqli_query($conn,$sql);
-         $row=mysqli_fetch_assoc($result);
+        $row=mysqli_fetch_assoc($result);
            
             $name=$row['product_name'];
             $image=$row['product_img'];
             $description=$row['product_description'];
+            $category=$row['product_category'];
             $price=$row['product_price'];
             $quantity=$row['product_qu'];
+            $sql="SELECT * FROM category WHERE c_id=$category";
+            $result=mysqli_query($conn,$sql);
+            $row=mysqli_fetch_assoc($result);
+            $p_category=$row['c_name'];
         ?>
 
         <div class="container ">
@@ -72,7 +77,7 @@ include 'database.php'; // Include the database connection.
                     </div>
                 </div>
                 
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">Product Name</label>
                         <input type="text" name="product_name" id="form4Example1" value="<?=$name?>" class="form-control" />
@@ -95,6 +100,25 @@ include 'database.php'; // Include the database connection.
                         <label class="form-label" for="form4Example3">Quantity(Pcs)</label>
                         <input class="form-control" name="product_qu" id="form4Example3" value="<?= $quantity?>" rows="4"></input>
                     </div>
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form4Example3">Product Category</label>
+                          <select name="ptype" class="form-select" aria-label="select example">
+                                <option value="<?=$category?>"><?=$p_category?></option>
+                                <?php
+                                    // category dropdown
+                                    $sql="SELECT * FROM category";
+                                    $result=mysqli_query($conn,$sql);
+                                    while($row=mysqli_fetch_assoc($result)){
+                                        $c_name=$row['c_name'];
+                                        $c_id=$row['c_id'];
+                                        if ($c_id==$category) {
+                                            continue;
+                                        }
+                                        echo "<option value='$c_id'>$c_name</option>";
+                                    }
+                                ?>
+                          </select>
+                    </div>
                 </div>
                 <!-- file upload -->
                 <div class="d-flex pt-1 justify-content-center">
@@ -111,7 +135,7 @@ include 'database.php'; // Include the database connection.
 
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-3 mb-4">Update</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Update</button>
                 </div>
                 
             </form>
@@ -124,6 +148,7 @@ include 'database.php'; // Include the database connection.
 <?php
 // Check 
 if(isset($_POST["update"])) { 
+  $p_cat=$_POST["ptype"];
   $target_dir = "product/"; 
   $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]); // image name
   $uploadOk = 1; 
@@ -160,7 +185,7 @@ if(isset($_POST["update"])) {
       echo "Sorry, there was an error uploading your file.";
     }
   }
-  $sql= "UPDATE product SET  product_name ='$product_name' , product_price='$product_price',product_description ='$product_description',product_img='$product_img', product_qu='$product_qu'  WHERE product_id ='$id';";
+  $sql= "UPDATE product SET  product_name ='$product_name' , product_price='$product_price',product_description ='$product_description',product_img='$product_img', product_qu='$product_qu', product_category='$p_cat'  WHERE product_id ='$id';";
       mysqli_query($conn,$sql);
       echo'<script>
       window.location.href="product_mgmt.php";

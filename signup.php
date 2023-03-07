@@ -9,7 +9,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Page Title</title>
+    <title>Signup</title>
     <link rel="icon" type="image/x-icon" href="assets/svg-logo/logo1.svg">
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -69,18 +69,34 @@
                 <h2 class="text-center">Signup</h2>
               </div>
               <!-- Name input -->
-              <div class="form-outline mb-4">
+              
+              <div  class="d-flex ">
+                <div  class="form-outline pe-1 col-6 mb-4">
                 <label class="form-label" for="form3Example3"
-                  >Full Name</label
+                  >First Name</label
                 >
                 <input
                   type="text"
-                  name="name"
+                  name="fname"
                   id="form3Example3"
                   class="form-control form-control-lg"
-                  placeholder="Enter your full name"
+                  placeholder="Enter your First name" required
                 />
               </div>
+              <div class="form-outline ps-1 col-6 mb-4">
+                <label class="form-label" for="form3Example3"
+                  >Last Name</label
+                >
+                <input
+                  type="text"
+                  name="lname"
+                  id="form3Example3"
+                  class="form-control form-control-lg"
+                  placeholder="Enter your Last name" required
+                />
+              </div>
+              </div>
+              
 
               <!-- Email input -->
               <div class="form-outline mb-4">
@@ -92,7 +108,7 @@
                   id="form3Example3"
                   class="form-control form-control-lg"
                   name="email"
-                  placeholder="Enter a valid email address"
+                  placeholder="Enter a valid email address" required
                 />
               </div>
 
@@ -104,7 +120,7 @@
                   name="pass"
                   id="form3Example4"
                   class="form-control form-control-lg"
-                  placeholder="Enter password"
+                  placeholder="Enter password" required
                 />
               </div>
 
@@ -118,7 +134,7 @@
                   name="cpass"
                   id="form3Example4"
                   class="form-control form-control-lg"
-                  placeholder="Retype password"
+                  placeholder="Retype password" required
                 />
               </div>
 
@@ -135,7 +151,7 @@
 
                 <!-- captcha input -->
                 <input type="text" name="captcha" id="form3Example4" class="form-control form-control-lg"
-                  placeholder="Enter Captcha Code" />            
+                  placeholder="Enter Captcha Code" required />            
               </div> 
 
               <!-- Submit button --> 
@@ -163,9 +179,9 @@
         if($_SESSION['captcha'] == $_POST['captcha']){
 
           // checking for empty fields
-          if(($_POST['email'] == "") || ($_POST['pass'] == "") || ($_POST['cpass'] == "") || ($_POST['utype'] == "") || ($_POST['name'] == "")){
+          if(($_POST['email'] == "") || ($_POST['pass'] == "") || ($_POST['cpass'] == "") || ($_POST['utype'] == "") || ($_POST['fname'] == "") || ($_POST['lname'] == "")){
             echo "<script>alert('Please fill all the fields')</script>";
-            echo "<script>window.location='/project/signup.php'</script>";
+            echo "<script>window.location='/signup.php'</script>";
           }
 
           // if all fields are not empty
@@ -176,7 +192,7 @@
             $pass=$_POST['pass'];
             $cpass=$_POST['cpass'];
             $utype=$_POST['utype'];
-            $name=$_POST['name'];
+            $name=$_POST['fname']." ".$_POST['lname'];
 
             // check if email already exists
             $sql=
@@ -187,7 +203,7 @@
             // if email already exists
             if($num==1){
               echo "<script>alert('Email Already Exists')</script>";
-              echo "<script>window.location='/project/signup.php'</script>";
+              echo "<script>window.location='/signup.php'</script>";
             } // end of if
 
             // if email does not exists
@@ -207,7 +223,7 @@
                 if($result){
                   unset($_SESSION['captcha']);
                   echo "<script>alert('Registered Successfully')</script>";
-                  echo "<script>window.location='/project/login.php'</script>";
+                  echo "<script>window.location='/login.php'</script>";
                 }
                 else{
                   echo "<script>alert(' Registration Failed')</script>";

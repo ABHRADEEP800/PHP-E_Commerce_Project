@@ -55,7 +55,7 @@ include 'database.php'; // Include the database connection.
                 <div class="px-auto">
                     <h1 class="text-center"  >Add New Product</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-sm-12 col-lg-6 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">Seller Name</label>
                         <input type="text" name="product_name" id="form4Example1" value="<?=$user_name?>" disabled class="form-control" />
@@ -80,7 +80,22 @@ include 'database.php'; // Include the database connection.
                         <label class="form-label" for="form4Example3">Description</label>
                         <input class="form-control" name="product_description" id="form4Example3" placeholder="Enter Product Description" rows="4"></input>
                     </div>
-                    <!--  -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form4Example3">Product Category</label>
+                          <select name="ptype" class="form-select" aria-label="select example">
+                                <option selected value="select">Select Category</option>
+                                <?php
+                                    // Category Dropdown
+                                    $sql="SELECT * FROM category"; // SQL with parameters
+                                    $result=mysqli_query($conn,$sql);
+                                    while($row=mysqli_fetch_assoc($result)){ // To store the row
+                                        $c_name=$row['c_name'];
+                                        $c_id=$row['c_id'];
+                                        echo "<option value='$c_id'>$c_name</option>";
+                                    }
+                                ?>
+                          </select>
+                    </div>
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example3">Quantity(Pcs)</label>
                         <input class="form-control" name="product_qu" id="form4Example3" placeholder="Enter Product Quantity" rows="4"></input>
@@ -101,7 +116,7 @@ include 'database.php'; // Include the database connection.
                 <!-- Submit button -->
 
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="add_product" class="btn btn-primary btn-block col-3 mb-4">Add Product</button>
+                    <button type="submit" name="add_product" class="btn btn-primary btn-block  mb-4">Add Product</button>
                 </div>
             </form>
         </div>
@@ -109,7 +124,14 @@ include 'database.php'; // Include the database connection.
             
         ?>
 <?php
-if(isset($_POST["add_product"])) { // Check if the form is submitted
+// Check if image file is a actual image or fake image
+if(isset($_POST["add_product"])) {
+  if($_POST["ptype"]=="select"){
+    echo "<script>alert('Please Select Category')</script>";
+    exit;
+  }
+  $p_cat= $_POST["ptype"]; 
+
     $target_dir = "product/"; // Set the destination folder
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]); // Set the file path & name
     $uploadOk = 1; // Set the flag
@@ -141,7 +163,7 @@ if(isset($_POST["add_product"])) { // Check if the form is submitted
   } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         $product_img=$target_file;
-        $sql="INSERT INTO `product`(`product_name`, `product_price`, `product_description`, `product_img`, `product_qu`, `product_userid`) VALUES ('$product_name','$product_price','$product_description','$product_img', '$product_qu', '$user_id')";
+        $sql="INSERT INTO `product`(`product_name`, `product_price`, `product_description`, `product_img`, `product_qu`, `product_userid`,`product_category`) VALUES ('$product_name','$product_price','$product_description','$product_img', '$product_qu', '$user_id', '$p_cat')";
         $result=mysqli_query($conn,$sql);
         if($result){
             echo "<script>location.href='product_mgmt.php'</script>";

@@ -1,14 +1,87 @@
 <?php
 session_start();
+ob_start();
+// including database connection file
+include 'database.php';
 
-// if user is logged in, redirect to index page
-if (isset($_SESSION['seller'])) {
-    header('location: app/seller_index.php');
-  exit;
+if(isset($_COOKIE['customer']))
+{
+  $data = unserialize($_COOKIE['customer']);
+  $email = $data['email'];
+  $session_id = $data['session_id'];
+ 
+
+  // including database connection file
+  include 'database.php';
+
+  // checking if session id is correct
+  $sql = "SELECT * FROM session WHERE email = '$email' AND session_id='$session_id'";
+  $result = mysqli_query($conn, $sql);
+  $row = mysqli_fetch_assoc($result);
+  $expdate = $row['exp_date'];
+  $expiry_timestamp = strtotime($expdate);
+  if (time() > $expiry_timestamp) {
+    setcookie("customer", "", time() - 3600, "/");
+    echo"<script>alert('Your session has expired. Please login again.')</script>";
+    echo"<script>window.location.href='login.php'</script>";
+    
+
+} else {
+    // setting session variable for customer
+    $_SESSION['customer'] = $email;
+
+    // if customer redirecting to  index page
+    echo "<script>window.location.href='index.php'</script>";
+  }
+
 }
+if(isset($_COOKIE['seller']))
+{
+  $data = unserialize($_COOKIE['seller']);
+  $email = $data['email'];
+  $session_id = $data['session_id'];
+ 
+
+  // including database connection file
+  include 'database.php';
+
+  // checking if session id and exp dateis correct
+  $sql = "SELECT * FROM session WHERE email = '$email' AND session_id='$session_id'";
+  $result = mysqli_query($conn, $sql);
+  $row = mysqli_fetch_assoc($result);
+  $expdate = $row['exp_date'];
+  $expiry_timestamp = strtotime($expdate);
+  if (time() > $expiry_timestamp) {
+    setcookie("seller", "", time() - 3600, "/");
+    echo"<script>alert('Your session has expired. Please login again.')</script>";
+    echo"<script>window.location.href='login.php'</script>";
+    
+
+} else {
+    // setting session variable for customer
+    $_SESSION['seller'] = $email;
+
+    // if customer redirecting to  index page
+    echo "<script>window.location.href='app/seller_index.php'</script>";
+  }
+
+}
+
+
+  
 
 // including database connection file
 include 'database.php';
+// if user is logged in, redirect to index page
+if (isset($_SESSION['seller'])) {
+  header('location: app/seller_index.php');
+exit;
+}
+// if user is logged in, redirect to index page
+if (isset($_SESSION['customer'])) {
+  header('location: index.php');
+exit;
+}
 
 ?>
 
@@ -17,7 +90,7 @@ include 'database.php';
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Page Title</title>
+    <title>Login</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="icon" type="image/x-icon" href="assets/svg-logo/logo1.svg">
 
@@ -33,6 +106,7 @@ include 'database.php';
 
 <!---------------------header -------------------------->
 <?php
+
     include 'header.php';
 ?>
 <!-------------------------------------------------body----------------------------------------------------------->
@@ -75,12 +149,31 @@ include 'database.php';
             <!-- input captcha  -->
             <input type="text" name="captcha" id="form3Example4" class="form-control form-control-lg"
               placeholder="Enter Captcha Code" />            
-          </div>  
+          </div>
+          
+          <!-- remember me -->
+          <div class="form-check mb-2">
+            <input
+              class="form-check-input me-2"
+              type="checkbox"
+              value=""
+              id="form2Example3"
+              name = "remember"
+            />
+            <label class="form-check-label" for="form2Example3"> Remember me </label>
+            </div>
           
           <!-- Submit button -->
           <div class="text-center text-lg-start mt-4 pt-2">
             <button type="submit" name="login" class="btn btn-primary btn-lg"
               style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+              <!-- forget password -->
+              <a href="reset_pass.php" class="offset-1 ps-3 "
+              style="">Forget Password</a>
+
+          </div>
+          <div class="mt-5">
+            <p class="text-center">Don't have an account? <a href="signup.php">Register</a></p>
           </div>
         </form>
       </div>
@@ -96,7 +189,7 @@ include 'database.php';
 </body>
 </html>
 <?php
-    
+    $session_id = substr(str_shuffle("23456789abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"), 0, 10);
     // checking if login button is clicked
     if(isset($_POST['login'])){
 
@@ -120,24 +213,101 @@ include 'database.php';
         if($row['user_type'] == 'Seller' && $pass == $password){
             session_start();
             unset($_SESSION['captcha']);
+             // if remember me is checked
+          if(isset($_POST['remember'])){
+            // Create an array with multiple data
+            $data = array(
+              'email' => $email,
+              'session_id' => $session_id,
+              'user_type' => 'Seller'
+            );
+
+            // Serialize the array into a string
+            $data_string = serialize($data);
+
+            // setting cookie for customer
+            setcookie("seller", $data_string, time() + (7 * 24 * 60 * 60) , "/");
+
+            // Set the duration of the cookie (in seconds)
+            $cookie_duration = 7 * 24 * 60 * 60; // 7 days
+
+            // Calculate the expiry timestamp
+            $expiry_timestamp = time() + $cookie_duration;
+
+            // Convert the expiry timestamp to a SQL date format
+            $expiry_date = date('Y-m-d H:i:s', $expiry_timestamp);
+            //delete previous session id from database
+            $sql = "DELETE FROM session WHERE email = '$email'";
+            $result = mysqli_query($conn, $sql);
+
+            // updating session id in database
+            $sql = "INSERT INTO session (session_id, email, exp_date) VALUES ('$session_id', '$email', '$expiry_date')";
+            $result = mysqli_query($conn, $sql);
 
             // setting session variable for seller
             $_SESSION['seller'] = $row['user_email'];
 
             // if seller redirecting to seller index page
             echo "<script>window.location.href='app/seller_index.php'</script>";
+          }
+          else{
+            // setting session variable for seller
+            $_SESSION['seller'] = $row['user_email'];
+
+            // if seller redirecting to seller index page
+            echo "<script>window.location.href='app/seller_index.php'</script>";
+          }
         }
 
         // checking if user is customer and matching password
         else if($row['user_type'] == 'Customer' && $pass == $password){
           session_start();
           unset($_SESSION['captcha']);
+          // if remember me is checked
+          if(isset($_POST['remember'])){
+            // Create an array with multiple data
+            $data = array(
+              'email' => $email,
+              'session_id' => $session_id,
+              'user_type' => 'Customer'
+            );
 
-          // setting session variable for customer
-          $_SESSION['customer'] = $row['user_email'];
+            // Serialize the array into a string
+            $data_string = serialize($data);
 
-          // if customer redirecting to  index page
-          echo "<script>window.location.href='index.php'</script>";
+            // setting cookie for customer
+            setcookie("customer", $data_string, time() + (7 * 24 * 60 * 60) , "/");
+
+            // Set the duration of the cookie (in seconds)
+            $cookie_duration = 7 * 24 * 60 * 60; // 7 days
+
+            // Calculate the expiry timestamp
+            $expiry_timestamp = time() + $cookie_duration;
+
+            // Convert the expiry timestamp to a SQL date format
+            $expiry_date = date('Y-m-d H:i:s', $expiry_timestamp);
+            //delete previous session id from database
+            $sql = "DELETE FROM session WHERE email = '$email'";
+            $result = mysqli_query($conn, $sql);
+
+            // updating session id in database
+            $sql = "INSERT INTO session (session_id, email, exp_date) VALUES ('$session_id', '$email', '$expiry_date')";
+            $result = mysqli_query($conn, $sql);
+
+            // setting session variable for customer
+            $_SESSION['customer'] = $row['user_email'];
+
+            // if customer redirecting to  index page
+            echo "<script>window.location.href='index.php'</script>";
+
+          }else{
+
+            // setting session variable for customer
+            $_SESSION['customer'] = $row['user_email'];
+
+            // if customer redirecting to  index page
+            echo "<script>window.location.href='index.php'</script>";
+          }
         }else{
             echo "<script>alert('Invalid Email or Password')</script>";
         }
@@ -146,4 +316,5 @@ include 'database.php';
           echo "<script>alert('Invalid Captcha')</script>";
       }
     }
+    ob_end_flush();
 ?>

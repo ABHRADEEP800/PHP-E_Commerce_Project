@@ -17,6 +17,7 @@ include('database.php');
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
     />
+    
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
     <script
@@ -26,6 +27,7 @@ include('database.php');
     <script src="jquery.js"></script>
  
     <script src="main.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css" />
   </head>
   <body>
     <!-- including header -->
@@ -39,7 +41,7 @@ include('database.php');
         <h1> CART </h1>
       </div>
 
-      <div class="col-lg-9">
+      <div class="col-lg-9 table-responsive">
         <table class="table">
           <!-- table head -->
           <thead class="text-center">
@@ -54,7 +56,8 @@ include('database.php');
           </thead>
           <!-- table body -->
           <tbody class="text-center">
-            <?php 
+            <?php
+              $gtotal = 0; 
               // checking if cart is empty or not
               if(isset($_SESSION['cart']))
               {
@@ -65,6 +68,7 @@ include('database.php');
                   $product_id=$value['product_id'];
                   $sql="SELECT * FROM product WHERE product_id = '$product_id'";
                   $result=mysqli_query($conn,$sql);
+                  
                   
                   // checking if product is available in database or not
                   while($row=mysqli_fetch_assoc($result))
@@ -97,6 +101,9 @@ include('database.php');
                       </td>
                     </tr>
                   ";
+                  $total = $p_price*$value['Quantity'];
+                  $gtotal = $gtotal + $total;
+
                 } // end of foreach loop
               } // end of if condition
             ?>
@@ -107,26 +114,61 @@ include('database.php');
       <div class="col-lg-3">
         <div class="border bg-light rounded p-4">
           <h4>Grand Total:</h4>
-          <h5 class="text-right" id="gtotal"></h5>
-          <br>
+          <h5 class="text-right" id="gtotal"><?=$gtotal?></h5>
           
-          <?php 
+          <?php
           // checking if cart is empty or not
             if(isset($_SESSION['cart']) && count($_SESSION['cart'])>0)
             {
           ?>
-          <form action="purchase.php" method="POST">
-            <div class="form-group">              
-              <div class="form-check">
-                <input class="form-check-input" type="radio"  value="COD" id="flexRadioDefault2" checked>
-                <label class="form-check-label" for="flexRadioDefault2">
-                  Cash On Delivery
-                </label>
+          <!-- taking user address -->
+          <form action="payment.php" method="POST">
+            <div class="mb-3">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" id="address"name="address"  placeholder="1234 Main St" required>
+              <div class="invalid-feedback">
+                Please enter your shipping address.
               </div>
-              <br>
-              <button class="btn btn-primary btn-block" name="purchase">Make Purchase</button>
+            </div>
+
+            <!-- taking user city -->
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="country">Country</label>
+                <select class="custom-select d-block w-100" name="country" id="country" required>
+                  <option value="">Choose...</option>
+                  <option value="United States">United States</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="state">State</label>
+                <select class="custom-select d-block w-100"name="state" id="state" required>
+                  <option value="">Choose...</option>
+                  <option value="California" >California</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+              </div>
+              
+              <div class=" mb-3">
+                <label for="zip">Zip</label>
+                <input type="text" class="form-control" id="zip" name="zip" placeholder="" required>
+                <div class="invalid-feedback">
+                  Zip code required.
+                </div>
+              </div>
+              
+            </div>
+            <div class="form-group">
+              <button type="submit" class="btn btn-primary btn-block" name="continue">Continue</button>
             </div>
           </form>
+
+
           <?php
             } // end of if condition
           ?>
@@ -134,32 +176,31 @@ include('database.php');
       </div>
     </div>
   </div>
-
   <script>
-    // calculating total price of each product
-    var gt=0;
-    var iprice=document.getElementsByClassName('iprice');
-    var iquantity=document.getElementsByClassName('iquantity');
-    var itotal=document.getElementsByClassName('itotal');
-    var gtotal=document.getElementById('gtotal');
-    // function to calculate total price of each product
-    function subTotal()
+  // Set the initial grand total value
+  var gt=0;
+  var iprice=document.getElementsByClassName('iprice');
+  var iquantity=document.getElementsByClassName('iquantity');
+  var itotal=document.getElementsByClassName('itotal');
+  var gtotal=document.getElementById('gtotal');
+
+  function subTotal() 
+  {
+    gt=0;
+    for(i=0;i<iprice.length;i++) 
     {
-      gt=0;
-      for(i=0;i<iprice.length;i++)
-      {
-        itotal[i].innerText=(iprice[i].value)*(iquantity[i].value);
+      itotal[i].innerText=(iprice[i].value)*(iquantity[i].value); // Set the total price of each product
 
-        gt=gt+(iprice[i].value)*(iquantity[i].value);
+      gt=gt+(iprice[i].value)*(iquantity[i].value); // Set the grand total
 
-      }
-      gtotal.innerText=gt;
     }
-    
-    // calling subTotal function
-    subTotal();
+    gtotal.innerText=gt; // Set the grand total
+  } 
+  
+  subTotal(); // Calling the function
 
-  </script>
+</script>
+
     <!----------- including footer --------------->
     <?php
         include 'footer.php';

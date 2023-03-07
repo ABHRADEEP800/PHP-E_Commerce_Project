@@ -17,7 +17,6 @@
     <link rel="icon" type="image/x-icon" href="assets/svg-logo/logo1.svg">
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
@@ -28,6 +27,9 @@
       src="https://kit.fontawesome.com/db79afedbd.js"
       crossorigin="anonymous"
     ></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css" />
+
+
   </head>
   <body>
     <!-- including header -->
@@ -127,7 +129,6 @@ if(isset($_POST['d_account'])){
 }
 ?>
 
-
 <section style="background-color: #eee;">
   <div class="container py-5">
     <div class="row">
@@ -146,143 +147,105 @@ if(isset($_POST['d_account'])){
       </div>
 
       <!-- all details of user -->
-      <div class="col-lg-8">
-        <div class="card mb-4">
+      <div class="col-lg-8 ">
+        <div class="card mb-4 tab-hide">
           <div class="card-body">
             <div class = "tab-titles" >
-                <p class = "h6 tab-links active-link" onclick="opentab('orders')" > My orders </p >
-                <p class = "h6 tab-links" onclick="opentab('account')" > Account </p >
-                <p class = "h6 tab-links " onclick="opentab('seller')"> Become A Seller </p >
-                <p class = "h6 tab-links " onclick="opentab('c_pass')"> Change Password </p >
-                <p class = "h6 tab-links " onclick="opentab('d_account')"> Delete Account </p >
+                <p class = "h6 tab-links" id="accountlink"onclick="opentab('account')" > Account </p >
+                <p class = "h6 tab-links"id="orderlink" onclick="opentab('orders')" > My orders </p >
+                <p class = "h6 tab-links " id="sellerlink" onclick="opentab('seller')"> Become A Seller </p >
+                <p class = "h6 tab-links " id="clink"onclick="opentab('c_pass')"> Change Password </p >
+                <p class = "h6 tab-links "  id="dlink"onclick="opentab('d_account')"> Delete Account </p >
             </div>
           </div>
         </div>
         
         <form method="post">
         <!------------------ order Details --------------------->
-        <div class="tab-contents active-tab" id="orders">
+        <div class="tab-contents" id="orders">
           <div class="card mb-4">
             <div class="card-body">
-              <!-- outer table -->
-              <table class="table">
-                <tr>
-                  <th>Order Date</th>
-                  <th>Status</th>
-                  <th>Order Item</th>
-                  <th>Invoice</th>
-                </tr>
-
+              <div class="mb-4">
+                <div class="section-title">
+                  <p class="h3">Recent Orders</p>
+                </div>
+                <hr>
                 <?php
-
-                    // pagination for orders
-                    $limit = 1;
-                    $page = isset($_GET['page']) ? $_GET['page'] : 1;
-                    $start = ($page -1) * $limit;
-        
-        
-                    $result1 = $conn->query("SELECT count(order_id) AS order_id FROM orders  WHERE order_user = '$user_id'");
-                    $countAll = $result1->fetch_all(MYSQLI_ASSOC);
-        
-                    $total = $countAll[0]['order_id'];
-                    $pages = ceil($total / $limit);
-        
-                    $previous = $page -1;
-                    $next = $page +1;
-        
-                    if($previous==0){
-                        $previous=1;
-                        
-                    }   
-        
-                    if($next > $pages){
-                        $next = $pages; 
-                    }
-
                     // getting orders of user from database
-                    $sql = "SELECT * FROM orders WHERE order_user = '$user_id' LIMIT $start, $limit;";
+                    $sql = "SELECT * FROM orders WHERE order_user = '$user_id' ORDER BY order_id DESC LIMIT 1";
                     $result = mysqli_query($conn, $sql);
 
                     // displaying orders of user
                     while($row = mysqli_fetch_assoc($result)){
                       $order_id = $row['order_id'];
-                      $order_date = $row['order_date'];
+                      $order_date = date("d M Y ", strtotime($row['order_date']));
                       $order_status = $row['order_status'];
-                      echo "<tr>
-                              <td>$order_date</td>
-                              <td>$order_status</td>
-                              <td>
-                              <table class='table table-bordered '>
-                              <tbody>
-                               <tr>
-                              <th>Product Name</th>
-                              <th>Quantity</th>
-                              </tr>";
+                        // getting order items of user from database
+                        $sql1="SELECT product.product_name, order_p.order_qu, product.product_img, product.product_id 
+                        FROM order_p
+                        INNER JOIN product ON product.product_id=order_p.order_item
+                        WHERE order_p.order_id=$order_id LIMIT 2";
+                        $result1=mysqli_query($conn,$sql1);
 
-                            // getting order items of user from database
-                            $sql1="SELECT product.product_name, order_p.order_qu
-                            FROM order_p
-                            INNER JOIN product ON product.product_id=order_p.order_item
-                            WHERE order_p.order_id=$order_id";
-                            $result1=mysqli_query($conn,$sql1);
-
-                            // displaying order items of user
-                            while($row1=mysqli_fetch_assoc($result1)){
-                                $product_name=$row1['product_name'];
-                                $product_quantity=$row1['order_qu'];
-                          ?>
-
-                              <tr>
-                                <td><?php echo $product_name ?></td>
-                                <td><?php echo $product_quantity?> Pcs</td>
-                              </tr>
-                           
-                            
-                            <?php
-                            }
-                            ?>
-
-                            
-                            </tbody>
-                            </table> <!-- end of inner table -->
-                          </td>
-                          <td><a href='invoice.php?orderId=<?php echo $order_id?>' class='btn btn-primary'>Invoice</a></td>
-                        </tr>
-                            
-                  <?php 
-                            }
-                ?>
-              </table> <!-- end of outer table -->
-              <div class="d-flex">
-                <!-- showing current page and number of all pages -->
-                <div class="col-6">Showing <b><?php echo $page;?></b> out of <b><?php echo $pages;?></b> Pages</div>
-                <div class="col-6 d-flex justify-content-end">
-                    <div class="">
-                      <!-- showing go to page buttons -->
-                        <ul class="pagination">
-
-                          <li class=""><a class="page-link" href="account.php?page=<?php echo $previous;?>">&laquo; Previous</a></li>
-                          <?php
-
-                            // pagination for orders
-                            if($page <= 2){
-                              $page = 1;
-                            }elseif($page >= $pages - 2){
-                              $page = $pages - 2;
-                            }
-
-                            // displaying pagination for orders
-                            for($i = $page; $i <= $page + 2; $i++): 
-                            if($i <= $pages){?>
-                              
-                            <li class=""><a class="page-link" href="account.php?page=<?php echo $i;?>"><?php echo $i;?></a></li>
-
-                          <?php } endfor; ?>
-                          <li class=""><a class="page-link" href="account.php?page=<?php echo $next;?>">&raquo; Next</a></li>
-                        
-                        </ul>
+                        // displaying order items of user
+                        while($row1=mysqli_fetch_assoc($result1)){
+                            $product_name=$row1['product_name'];
+                            $product_quantity=$row1['order_qu'];
+                            $product_img=$row1['product_img'];
+                            $product_id=$row1['product_id'];
+                      
+                  ?>
+                    <!-- showing order details -->
+                    <div class="row mb-3 bb-1 pt-0">
+                      <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
+                        <img class="thumb_img" src="<?php echo "app/".$product_img; ?>">
+                      </div>
+                      <div class="col-md-8 col-lg-8 col-sm-12 col-xs-12">
+                        <a class="d-flex" href="order_view.php?order_id=<?php echo $order_id;?>">
+                          <div class="col-6 me-3">
+                            <p class="h4"><?php echo $product_name; ?></p>
+                          </div>
+                          <div class="col-4">
+                            <small><?php echo $product_quantity." Pcs"; ?></small>
+                          </div>
+                          <div class="col-2">
+                            <i class="fa fa-angle-right"></i>
+                          </div>
+                        </a>
+                        <div class="d-flex">
+                          <div class="col-6">
+                            <small class="text-muted "><?php echo $order_status." on ".$order_date; ?></small>
+                        </div>                                     
+                      
+                        <?php
+                          // checking if order is delivered or not
+                          if($order_status == "Delivered" ){
+                            $sql3= "SELECT * FROM review WHERE product_id = '$product_id' AND order_id = '$order_id'";
+                            $result22 = mysqli_query($conn, $sql3);
+                            $row_count= mysqli_num_rows($result22);
+                            // checking if user has already rated the product or not
+                            if($row_count==0){
+                        ?>
+                        <div class='col-6 text-end'>
+                          <a class='text-end' href='rating.php?order_id=<?php echo $order_id;?>&product_id=<?=$product_id?>'>Rate This product >></a>                                     
+                        </div>
+                        <?php  
+                          }
+                        }
+                        ?>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                    <!-- bottomm line -->
+                    <hr>
+                  <?php 
+                      }
+                    }
+                  ?>
+                  <!-- see all orders -->
+                  <div class="d-flex justify-content-end">
+                    <a href="all_orders.php" class=""><u>See All Orders</u></a>
+                  </div>
               </div>
             </div>
           </div>
@@ -338,23 +301,23 @@ if(isset($_POST['d_account'])){
         <div class="tab-contents" id="c_pass">
           <div class="card mb-4">
             <div class="card-body">
-          <div class="form-outline mb-4">
-            <label class="form-label" for="form4Example2">Enter Old Password</label>
-            <input type="password" name="old_pass" id="form4Example2" placeholder="Enter Old Password" class="form-control" />
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form4Example2">Enter Old Password</label>
+                <input type="password" name="old_pass" id="form4Example2" placeholder="Enter Old Password" class="form-control" />
+              </div>
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form4Example2">Enter New Password</label>
+                <input type="password" name="new_pass" id="form4Example2" placeholder="Enter new Password" class="form-control" />
+              </div>
+              <div class="form-outline mb-4">
+                <label class="form-label" for="form4Example3">Confirm Password</label>
+                <input type="password" class="form-control" name="cnf_pass" id="form4Example3" placeholder="Retype Password" rows="4"></input>
+              </div>
+              <div class="d-flex justify-content-center">
+                <button type="submit" name="r_pass" class="btn btn-primary btn-block mb-4">Reset Password</button>
+              </div>
+            </div>
           </div>
-          <div class="form-outline mb-4">
-              <label class="form-label" for="form4Example2">Enter New Password</label>
-              <input type="password" name="new_pass" id="form4Example2" placeholder="Enter new Password" class="form-control" />
-          </div>
-          <div class="form-outline mb-4">
-              <label class="form-label" for="form4Example3">Confirm Password</label>
-              <input type="password" class="form-control" name="cnf_pass" id="form4Example3" placeholder="Retype Password" rows="4"></input>
-          </div>
-          <div class="d-flex justify-content-center">
-                  <button type="submit" name="r_pass" class="btn btn-primary btn-block col-3 mb-4">Reset Password</button>
-                </div>
-                </div>
-                </div>
         </div>
 
         <!-------------------- delete account --------------------->
@@ -372,7 +335,7 @@ if(isset($_POST['d_account'])){
               </div>
           </div>
         </div>
-        </form>
+      </form>
     </div>
   </div>
 </section>
@@ -392,8 +355,7 @@ if(isset($_POST['d_account'])){
                 
             }
             event.currentTarget.classList.add("active-link")
-            document.getElementById(tabname).classList.add("active-tab")
-            
+            document.getElementById(tabname).classList.add("active-tab") 
         }
     </script>
     <script>
@@ -406,11 +368,47 @@ if(isset($_POST['d_account'])){
             sidemenu.style.right ="-400px";
         }
     </script>
+    <script>
+      const queryString = window.location.search;
+			const urlParams = new URLSearchParams(queryString);
+      if(urlParams.get('tab') == 'seller')
+      {
+        const seller=document.querySelector('#seller');
+        seller.classList.add('active-tab');
+        const sellerlink=document.querySelector('#sellerlink');
+        sellerlink.classList.add('active-link');
+      }
+      else if(urlParams.get('tab') == 'orders'){
+        const seller=document.querySelector('#orders');
+        seller.classList.add('active-tab');
+        const sellerlink=document.querySelector('#orderlink');
+        sellerlink.classList.add('active-link');
+      }
+      else if(urlParams.get('tab') == 'd_account'){
+        const seller=document.querySelector('#d_account');
+        seller.classList.add('active-tab');
+        const sellerlink=document.querySelector('#dlink');
+        sellerlink.classList.add('active-link');
+        
+      }
+      else if(urlParams.get('tab') == 'c_pass'){
+        const seller=document.querySelector('#c_pass');
+        seller.classList.add('active-tab');
+        const sellerlink=document.querySelector('#clink');
+        sellerlink.classList.add('active-link');
+      }
+      else{
+        const seller=document.querySelector('#account');
+        seller.classList.add('active-tab');
+        const sellerlink=document.querySelector('#accountlink');
+        sellerlink.classList.add('active-link');
+      }
+    </script>
 
 <!-- css for tab menu -->
 <style>
   .tab-titles {
-    display: flex;
+    /* display: flex; */
     margin: 20px 0 40px;
   }
   .tab-links {

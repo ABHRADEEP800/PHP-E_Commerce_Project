@@ -56,3 +56,9 @@
     // code to run since DOM is loaded and ready
    });
   </script>
+
+  <style>
+    .l-navbar{
+        height: 100%;
+    }
+  </style>

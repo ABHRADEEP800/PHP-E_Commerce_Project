@@ -1,16 +1,13 @@
 <!----seller login check ---->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['seller'])) { // Check if the user is logged in
+    header('location: /login.php'); // If user is not logged in then redirect him/her to login page
+  exit; // Quit the script
 }
-
-
+// Include the database config file
 include 'database.php';
-
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -55,7 +52,7 @@ include 'database.php';
 				  filename:     'ShippingLabel.pdf',
 				  image:        { type: 'jpeg', quality: 0.98 },
 				  html2canvas:  { scale: 2 },
-				  jsPDF:        { unit: 'in', format: 'A4', orientation: 'Landscape' }
+				  jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
 				};
 				// Choose the element that our invoice is rendered in.
 				html2pdf().set(opt).from(element).save();
@@ -69,24 +66,24 @@ include 'database.php';
 
 <!---php for data fetch for shipping label--->
 <?php 
-include('database.php');
-
-$id = $_GET['orderId'];
-$semail=$_SESSION['seller'];
-            $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
-            $result=mysqli_query($conn,$sql);
-            $row0=mysqli_fetch_assoc($result);
-            $user_n=$row0['user_name'];
-            $sid=$row0['user_id'];
-$sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_id, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id
-FROM orders
-INNER JOIN user ON user.user_id=orders.order_user
-INNER JOIN order_p ON orders.order_id=order_p.order_id 
-INNER JOIN product ON product.product_id=order_p.order_item
-WHERE orders.order_id = '$id' AND product.product_userid='$sid' ";
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
-
+        include('database.php');
+        $id = $_GET['orderId'];
+        $semail=$_SESSION['seller'];
+        $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
+        $result=mysqli_query($conn,$sql);
+        $row0=mysqli_fetch_assoc($result);
+        $user_n=$row0['user_name'];
+        $sid=$row0['user_id'];
+        $warehouse=$row0['warehouse'];
+        // warehouse address fetch
+        $sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_id, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id,orders.shipping_address
+        FROM orders
+        INNER JOIN user ON user.user_id=orders.order_user
+        INNER JOIN order_p ON orders.order_id=order_p.order_id 
+        INNER JOIN product ON product.product_id=order_p.order_item
+        WHERE orders.order_id = '$id' AND product.product_userid='$sid' ";
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_assoc($result);
 ?>
 
 <!----shipping label---->
@@ -99,7 +96,9 @@ $row = mysqli_fetch_assoc($result);
                 </div>
                 <h1 class="text-center">Grapple Inc</h1>
                 <h5 class="text-left" style="padding-top:10px;">Seller :</h5>
-                <p class="text-left"><?=$user_n?>
+                <strong class="text-left"><?=$user_n?>
+               </strong>
+                <p class="text-left"><?=$warehouse?>
                 </p>
             </div>
             <div class="col-4 mt-5 border border-dark">
@@ -108,7 +107,8 @@ $row = mysqli_fetch_assoc($result);
                 <p class="lead">Order Number:<?=$row['order_id']?></p>
                 <p>Purchased: <?=$row['order_date']?></p>
                 <h4>Shipping To</h4>
-                <p><?=$row['user_name']?></p>
+                <strong><?=$row['user_name']?></strong>
+                <p><?=$row['shipping_address']?></p>
                
             </div>
         </div>
@@ -122,15 +122,17 @@ $row = mysqli_fetch_assoc($result);
                 </tr>
             </thead>
             <tbody>
+
                 <?php
-                
-            $sql="SELECT product.product_name, order_p.order_qu,product.product_img,product.product_id
+                // fetch order item
+                        $sql="SELECT product.product_name, order_p.order_qu,product.product_img,product.product_id
                         FROM order_p
                         INNER JOIN product ON product.product_id=order_p.order_item
                         WHERE order_p.order_id=$id AND product.product_userid=$sid";
                         $result=mysqli_query($conn,$sql);
                         while($row1=mysqli_fetch_assoc($result)){
-                        ?>
+                ?>
+
                 <tr>
                     <td scope="row"><?=$row1['product_id']?></td>
                     <td><?=$row1['product_name']?></td>

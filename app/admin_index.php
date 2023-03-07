@@ -173,7 +173,7 @@ if (!isset($_SESSION['admin'])) { // if admin is not logged in
         </div>
     </div>
 </div>
-<div class="col-md-10 mx-auto d-flex" >
+<div class="col-md-10 mx-auto d-flex thide" >
     <div class="col-7 mx-auto">
         <div>
             <canvas id="myChart"></canvas>
@@ -226,4 +226,14 @@ if (!isset($_SESSION['admin'])) { // if admin is not logged in
         }); 
     </script>
     </body>
+    <style>
+        .thide{
+            display: block;
+        }
+        @media only screen and (max-width: 600px) {
+            .thide{
+                display: none!important;
+            }
+        }
+    </style>
 </html>

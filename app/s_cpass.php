@@ -1,11 +1,11 @@
 <!---Seller check login--->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['seller'])) { // Check if the user is logged in
+    header('location: /login.php'); // If user is not logged in then redirect him/her to login page
+  exit; // Quit the script
 }
-
+// Include the database config file
 include 'database.php';
 
 ?>
@@ -52,7 +52,7 @@ include 'database.php';
                 <div class="px-auto">
                     <h1 class="text-center">Reset Your Password</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-9 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">Your Email</label>
                         <input type="text" name="product_name" id="form4Example1" value="<?=$email?>" disabled class="form-control" />
@@ -72,21 +72,25 @@ include 'database.php';
                 </div>
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-3 mb-4">Reset Password</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block col-5 mb-4">Reset Password</button>
                 </div>
                 
             </form>
         </div>
         <!----php code for change password--->
 <?php
+// password change
 if(isset($_POST["update"])) 
 {   $old_pass=md5($_POST['old_pass']);
     $sql="SELECT * FROM user WHERE user_email='$email' AND user_pass='$old_pass'";
     $result=mysqli_query($conn,$sql);
     $row=mysqli_fetch_assoc($result);
+    // if old password is correct
     if ($row['user_pass'] == $old_pass) {
         $new_pass = $_POST['new_pass'];
         $cnf_pass = $_POST['cnf_pass'];
+
+        // if new password and confirm password is same
         if ($new_pass == $cnf_pass) {
             $new_pass = md5($new_pass);
             $sql = "UPDATE user SET user_pass='$new_pass' WHERE user_email='$email'";
@@ -95,11 +99,14 @@ if(isset($_POST["update"]))
                 alert("Password changed successfully");
                 window.location.href="seller_index.php";
             </script>';
-        } else {
+        }
+        // if new password and confirm password is not same 
+        else {
             echo '<script>
                 alert("Password does not match");
             </script>';
         }
+        //  if old password is incorrect
     }else{
         echo '<script>
                 alert("Old Password is incorrect");

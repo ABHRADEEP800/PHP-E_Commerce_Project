@@ -57,7 +57,7 @@ include 'database.php'; // Include the database connection.
         <h1> CART </h1>
       </div>
 
-      <div class="col-lg-9">
+      <div class="col-lg-9 table-responsive">
         <table class="table">
           <thead class="text-center">
             <tr>
@@ -146,6 +146,44 @@ include 'database.php'; // Include the database connection.
             <div class="form-group">
                 <label class="form-label" for="form4Example1">Select user E-mail</label>
                 <input type="text" name="user_email" id="etags" placeholder="Enter User Email" class="form-control" />
+                <div class="mb-3">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" id="address"name="address"  placeholder="1234 Main St" required>
+              <div class="invalid-feedback">
+                Please enter your shipping address.
+              </div>
+            </div>
+
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="country">Country</label>
+                <select class="custom-select d-block w-100" name="country" id="country" required>
+                  <option value="">Choose...</option>
+                  <option value="United States">United States</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="state">State</label>
+                <select class="custom-select d-block w-100"name="state" id="state" required>
+                  <option value="">Choose...</option>
+                  <option value="California" >California</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+              </div>
+              
+              <div class=" mb-3">
+                <label for="zip">Zip</label>
+                <input type="text" class="form-control" id="zip" name="zip" placeholder="" required>
+                <div class="invalid-feedback">
+                  Zip code required.
+                </div>
+                </div>
                     
             <div class="form-check">
               <input class="form-check-input" type="radio"  value="COD" id="flexRadioDefault2" checked>

@@ -72,7 +72,7 @@ include 'database.php'; // Include the database connection.
                 </div>
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-3 mb-4">Reset Password</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Reset Password</button>
                 </div>
                 
             </form>

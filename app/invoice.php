@@ -47,7 +47,7 @@ if (!isset($_SESSION['admin'])) { // If no session value is present, redirect th
 				  filename:     'invoice.pdf',
 				  image:        { type: 'jpeg', quality: 0.98 },
 				  html2canvas:  { scale: 2 },
-				  jsPDF:        { unit: 'in', format: 'A4', orientation: 'landscape' }
+				  jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
 				};
 				// Choose the element that our invoice is rendered in.
 				html2pdf().set(opt).from(element).save();
@@ -64,7 +64,7 @@ if (!isset($_SESSION['admin'])) { // If no session value is present, redirect th
 // getting details from database for invoice
 include('database.php');
 $id = $_GET['orderId'];
-$sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_img, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id
+$sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_img, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id, orders.discount
 FROM orders
 INNER JOIN user ON user.user_id=orders.order_user
 INNER JOIN order_p ON order_p.order_id=orders.order_id
@@ -108,7 +108,7 @@ $row = mysqli_fetch_assoc($result);
         </div>
         <?php
               $mtotal=0; // total price
-              $sql="SELECT product.product_name, order_p.order_qu,product.product_img,product.product_price
+              $sql="SELECT product.product_name, order_p.order_qu,product.product_img, order_p.price
               FROM order_p
               INNER JOIN product ON product.product_id=order_p.order_item
               WHERE order_p.order_id=$id"; // query to get all product from order
@@ -143,13 +143,13 @@ $row = mysqli_fetch_assoc($result);
           </div>
           <div class="col-md-3 mb-4 mb-md-0">
             <h5 class="mb-2">
-              <span class="align-middle">₹ <?=$row1['product_price']?>/ Per Product</span>
+              <span class="align-middle">₹ <?=$row1['price']?>/ Per Product</span>
             </h5>
           </div>
         </div>
         <?php
         
-        $total=$row1['product_price']*$row1['order_qu']; // total price of product
+        $total=$row1['price']*$row1['order_qu']; // total price of product
         
         $mtotal=$mtotal+$total; // total price of all product
         
@@ -163,9 +163,10 @@ $row = mysqli_fetch_assoc($result);
             <ul class="list-unstyled">
               <li class="text-muted ms-3"><span class="text-black me-4">Sub Total</span>₹ <?=$mtotal?></li>
               <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Shipping</span>₹0 </li>
+              <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Discount</span><?=$row['discount']?> % </li>
             </ul>
             <p class="text-black float-start"><span class="text-black me-3"> Total Amount</span><span
-                style="font-size: 25px;">₹ <?=$mtotal?></span></p>
+                style="font-size: 25px;">₹ <?=$mtotal-($mtotal*$row['discount']/100)?></span></p>
           </div>
         </div>
       </div>

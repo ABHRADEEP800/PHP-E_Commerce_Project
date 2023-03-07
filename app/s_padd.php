@@ -1,14 +1,12 @@
 <!---seller login check--->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Starting Session
+if (!isset($_SESSION['seller'])) { //if not logged in
+    header('location: /login.php'); // Redirecting To Home Page
+  exit; // stop further executing, very important
 }
-
-
+// database connection
 include 'database.php';
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -50,7 +48,7 @@ include 'database.php';
                     <h1 class="text-center"  >Add New Product</h1>
                 </div>
                 
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12" >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">Product Name</label>
                         <input type="text" name="product_name" id="form4Example1" placeholder="Enter Product Name" class="form-control" />
@@ -68,7 +66,21 @@ include 'database.php';
                         <label class="form-label" for="form4Example3">Description</label>
                         <input class="form-control" name="product_description" id="form4Example3" placeholder="Enter Product Description" rows="4"></input>
                     </div>
-                    <!--  -->
+                    <div class="form-outline mb-4">
+                        <label class="form-label" for="form4Example3">Product Category</label>
+                          <select name="ptype" class="form-select" aria-label="select example">
+                                <option selected value="select">Select Category</option>
+                                <?php
+                                    $sql="SELECT * FROM category";
+                                    $result=mysqli_query($conn,$sql);
+                                    while($row=mysqli_fetch_assoc($result)){
+                                        $c_name=$row['c_name'];
+                                        $c_id=$row['c_id'];
+                                        echo "<option value='$c_id'>$c_name</option>";
+                                    }
+                                ?>
+                          </select>
+                    </div>
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example3">Quantity(Pcs)</label>
                         <input class="form-control" name="product_qu" id="form4Example3" placeholder="Enter Product Quantity" rows="4"></input>
@@ -89,7 +101,7 @@ include 'database.php';
 
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="add_product" class="btn btn-primary btn-block col-3 mb-4">Add Product</button>
+                    <button type="submit" name="add_product" class="btn btn-primary btn-block mb-4">Add Product</button>
                 </div>
             </form>
         </div>
@@ -100,6 +112,11 @@ include 'database.php';
 <!--php to add new product--->
 <?php
 if(isset($_POST["add_product"])) {
+    if($_POST["ptype"]=="select"){
+      echo "<script>alert('Please Select Category')</script>";
+      exit;
+    }
+    $p_cat= $_POST["ptype"];
     $target_dir = "product/";
     $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
     $uploadOk = 1;
@@ -115,7 +132,7 @@ if(isset($_POST["add_product"])) {
     $uploadOk = 0;
   }
   // Check file size
-  if ($_FILES["fileToUpload"]["size"] > 500000) {
+  if ($_FILES["fileToUpload"]["size"] > 5000000) {
     echo "Sorry, your file is too large.";
     $uploadOk = 0;
   }
@@ -136,7 +153,7 @@ if(isset($_POST["add_product"])) {
         $row=mysqli_fetch_assoc($result);
         $user_id=$row['user_id'];
         $product_img=$target_file;
-        $sql="INSERT INTO `product`(`product_name`, `product_price`, `product_description`, `product_img`, `product_userid`, `product_qu`) VALUES ('$product_name','$product_price','$product_description','$product_img','$user_id', '$product_qu')";
+        $sql="INSERT INTO `product`(`product_name`, `product_price`, `product_description`, `product_img`, `product_userid`, `product_qu`,`product_category`) VALUES ('$product_name','$product_price','$product_description','$product_img','$user_id', '$product_qu', '$p_cat')";
         $result=mysqli_query($conn,$sql);
         if($result){
             echo "<script>location.href='s_pmgmt.php'</script>";
@@ -144,8 +161,6 @@ if(isset($_POST["add_product"])) {
         else{
             echo "Product Not Added";
         }
-        
-      
     } else {
       echo "Sorry, there was an error uploading your file.";
     }

@@ -1,9 +1,6 @@
 <?php
 session_start();
-// checking if user is logged in or not
-if(!isset($_SESSION['customer'])){
-  header("Location: login.php");
-}
+
 // including database connection file
 include('database.php');
 
@@ -22,6 +19,8 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
   // checking if purchase button is clicked
   if(isset($_POST['purchase']))
   {
+    $discount = $_POST['discount'];
+    $adress=$_SESSION['address'];
     // Quantity Check
     foreach($_SESSION['cart'] as $key => $value)
       {
@@ -32,6 +31,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
         $row = mysqli_fetch_assoc($result);
         $p_qu = $row['product_qu'];
         $p_name = $row['product_name'];
+        $p_price = $row['product_price'];
         if($p_qu < $order_qu)
         {
           echo"<script>
@@ -43,19 +43,23 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
       }
 
     // Order Insert
-    $query1="INSERT INTO `orders`(`order_user`, `order_status`) VALUES ('$u_id','Placed')";
+    $query1="INSERT INTO `orders`(`order_user`, `order_status`, `discount`,`shipping_address`) VALUES ('$u_id','Placed', '$discount','$adress')";
     if(mysqli_query($conn,$query1))
     {
       $Order_Id=mysqli_insert_id($conn);
-      $query2="INSERT INTO `order_p`(`order_id`, `order_item`, `order_qu`) VALUES (?,?,?)";
+      $query2="INSERT INTO `order_p`(`order_id`, `order_item`, `order_qu`, `price`) VALUES (?,?,?,?)";
       $stmt=mysqli_prepare($conn,$query2);
       if($stmt)
       {
-        mysqli_stmt_bind_param($stmt,"iii",$Order_Id,$order_item,$order_qu);
+        mysqli_stmt_bind_param($stmt,"iiii",$Order_Id,$order_item,$order_qu,$price);
         foreach($_SESSION['cart'] as $key => $value)
         {
           $order_item=$value['product_id'];
           $order_qu=$value['Quantity'];
+          $sql = "SELECT * FROM `product` WHERE `product_id` = '$order_item'";
+          $result = mysqli_query($conn, $sql);
+          $row = mysqli_fetch_assoc($result);
+          $price = $row['product_price'];
           mysqli_stmt_execute($stmt);
         }
         
@@ -75,9 +79,9 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
 
         // Unset Session cart
         unset($_SESSION['cart']);
+        unset($_SESSION['address']);
         echo"<script>
-          alert('Order Placed');
-          window.location.href='index.php';
+          window.location.href='order_cnf.php?order_id=$Order_Id';
         </script>";
       }
       else

@@ -23,7 +23,7 @@
     <div class="container border-top mt-2">
       <footer class="py-5">
         <div class="row">
-          <div class="col-6 col-md-3 mb-3">
+          <div class="col-4 col-md-3 mb-3">
 
             <!-- navigation buttons -->
             <h5>Section</h5>
@@ -37,18 +37,24 @@
               <li class="nav-item mb-2">
                 <a href="contact_us.php" class="nav-link p-0 text-muted">Contact Us</a>
               </li>
+              <li class="nav-item mb-2">
+                <a href="privacy_policy.php" class="nav-link p-0 text-muted">Privacy Policy</a>
+              </li>
+              <li class="nav-item mb-2">
+                <a href="faq.php" class="nav-link p-0 text-muted">FAQs</a>
+              </li>
             </ul>
           </div>
 
           <!-- contact us -->
-          <div class="col-6 col-md-3 mb-3">
+          <div class="col-4 col-md-3 mb-3">
             <h5>Contact Us</h5>
             <ul class="nav flex-column">
               <li class="nav-item mb-2">
-                <a href="tel:9836412677" class="nav-link p-0 text-muted">Phone No- +1 9836412677</a>
+                <a href="tel:1234567890" class="nav-link p-0 text-muted">Phone No- 1234567890</a>
               </li>
               <li class="nav-item mb-2">
-                <a href="mailto:support@grapple.com" class="nav-link p-0 text-muted">E-Mail- support@grapple.com</a>
+                <a href="mailto:support@grapple.abhradeep.com" class="nav-link p-0 text-muted">E-Mail-<small> support@grapple.abhradeep.com</small></a>
               </li>
               <li class="nav-item mb-2">
                 <a href="#" class="nav-link p-0 text-muted">Locate Us</a>

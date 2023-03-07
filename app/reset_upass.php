@@ -1,10 +1,10 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin'])) {
-    header('location: /admin_login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['admin'])) { // Check if admin is logged in
+    header('location: /admin_login.php'); // Redirect to login page
+  exit; // Stop the script
 }
-
+// Include the database connection file
 include 'database.php';
 
 ?>
@@ -41,7 +41,8 @@ include 'database.php';
     include 'database.php';     
 ?>
 <body>
-<?php
+    <?php
+        // Get the user id from the url
         $id=$_GET['userId'];
         $sql="SELECT * FROM user WHERE `user_id`='$id'";
         $result=mysqli_query($conn,$sql);
@@ -54,7 +55,7 @@ include 'database.php';
                 <div class="px-auto">
                     <h1 class="text-center">Reset User Password</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">User Email</label>
                         <input type="text" name="product_name" id="form4Example1" value="<?=$email?>" disabled class="form-control" />
@@ -70,30 +71,35 @@ include 'database.php';
                 </div>
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-3 mb-4">Reset Password</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Reset Password</button>
                 </div>
                 
             </form>
         </div>
-<?php
-if(isset($_POST["update"])) 
-{
-    $new_pass=$_POST['new_pass'];
-    $cnf_pass=$_POST['cnf_pass'];
-    if($new_pass==$cnf_pass){
-        $new_pass=md5($new_pass);
-        $sql="UPDATE user SET user_pass='$new_pass' WHERE user_id='$id'";
-        mysqli_query($conn,$sql);
-        echo'<script>
-        window.location.href="user_mgmt.php";
-        </script>';
-    }
-    else{
-        echo'<script>
-        alert("Password does not match");
-        </script>';
-    }
-}
-?>
-</body>
+        <?php
+        // Update the user password
+        if(isset($_POST["update"])) 
+        {
+            $new_pass=$_POST['new_pass'];
+            $cnf_pass=$_POST['cnf_pass'];
+
+            // Check if the password matches
+            if($new_pass==$cnf_pass){
+                $new_pass=md5($new_pass);
+                $sql="UPDATE user SET user_pass='$new_pass' WHERE user_id='$id'";
+                mysqli_query($conn,$sql);
+                echo'<script>
+                window.location.href="user_mgmt.php";
+                </script>';
+            }
+            
+            // If password does not match
+            else{
+                echo'<script>
+                alert("Password does not match");
+                </script>';
+            }
+        }
+        ?>
+    </body>
 </html>

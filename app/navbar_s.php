@@ -11,7 +11,7 @@
             <div> <a href="seller_index.php" class="nav_logo bg-dark"> <i class="fa-solid fa-g"></i><span class="nav_logo-name">Grapple</span> </a>
                 <div class="nav_list"> <a href="seller_index.php" class="nav_link active"> <i class='bx bx-grid-alt nav_icon'></i> 
                 
-                <span class="nav_name">Dashboard</span> </a><a href="s_pmgmt.php" class="nav_link"> <i class='bx bx-message-square-detail nav_icon'></i> <span class="nav_name">Product Managment</span> </a> <a href="s_omgmt.php" class="nav_link"> <i class="fa-solid fa-cart-shopping"></i> <span class="nav_name">Order Management</span> </a> <a href="s_cpass.php" class="nav_link"> <i class="fa-solid fa-key"></i> <span class="nav_name">Change Password</span> </a> </div>
+                <span class="nav_name">Dashboard</span> </a><a href="s_pmgmt.php" class="nav_link"> <i class='bx bx-message-square-detail nav_icon'></i> <span class="nav_name">Product Managment</span> </a> <a href="s_omgmt.php" class="nav_link"> <i class="fa-solid fa-cart-shopping"></i> <span class="nav_name">Order Management</span> </a> <a href="s_warehouse.php" class="nav_link"> <i class="fa-solid fa-warehouse"></i> <span class="nav_name">Warehouse Location</span> </a><a href="s_cpass.php" class="nav_link"> <i class="fa-solid fa-key"></i> <span class="nav_name">Change Password</span> </a> </div>
             </div> <a href="s_logout.php" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">SignOut</span> </a>
         </nav>
     </div>
@@ -56,3 +56,9 @@
     // code to run since DOM is loaded and ready
    });
   </script>
+
+<style>
+    .l-navbar{
+        height: 100%;
+    }
+  </style>

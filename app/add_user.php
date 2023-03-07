@@ -49,7 +49,7 @@ include 'database.php';
                 <div class="px-auto">
                     <h1 class="text-center"  >Add New User</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12" >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">User Name</label>
                         <input type="text" name="user_name" id="form4Example1" placeholder="Enter User Name" class="form-control" />
@@ -65,7 +65,7 @@ include 'database.php';
                         <label class="form-label" for="form4Example3">Password</label>
                         <input type="password" class="form-control" name="user_pass" id="form4Example3" placeholder="Enter Password" rows="4"></input>
                     </div>
-
+                    <!-- Password confirmation -->
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example3">Confirm Password</label>
                         <input type="password" class="form-control" name="user_conf_pass" id="form4Example3" placeholder="Retype Password" rows="4"></input>
@@ -79,7 +79,7 @@ include 'database.php';
                 </div>
                 <!-- Submit button -->
                 <div class="d-flex mt-5 justify-content-center">
-                    <button type="submit" name="add_user" class="btn btn-primary btn-block col-3 mb-4">Add User</button>
+                    <button type="submit" name="add_user" class="btn btn-primary btn-block  mb-4">Add User</button>
                 </div>
             </form>
         </div>

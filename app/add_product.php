@@ -73,14 +73,15 @@ include 'database.php';
                 <div class="px-auto">
                     <h1 class="text-center"  >Add New Product</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example1">Enter Seller Email</label>
-                        <input type="text" name="user_email" id="etags" placeholder="Enter Seller Email" class="form-control" />
-                    </div>
-                <!-- Submit button -->
-                <div class="d-flex justify-content-center">
-                    <button type="submit" name="nextt" class="btn btn-primary btn-block col-3 mb-4">Next</button>
+                <div class="flex mx-auto col-lg-6 col-sm-12" >
+                  <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example1">Enter Seller Email</label>
+                    <input type="text" name="user_email" id="etags" placeholder="Enter Seller Email" class="form-control" />
+                  </div>
+                  <!-- Submit button -->
+                  <div class="d-flex justify-content-center">
+                      <button type="submit" name="nextt" class="btn btn-primary btn-block  mb-4">Next</button>
+                  </div>
                 </div>
             </form>
         </div>

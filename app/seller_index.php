@@ -1,9 +1,9 @@
 <!---seller login check--->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['seller'])) { // Check if the user is logged in
+    header('location: /login.php'); 
+  exit; 
 }
 ?>
 <!DOCTYPE html>
@@ -34,6 +34,7 @@ if (!isset($_SESSION['seller'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <link rel="stylesheet" href="asset/card.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="..assets/css/main.css" />
 </head>
 <?php
     include 'navbar_s.php';
@@ -48,31 +49,31 @@ if (!isset($_SESSION['seller'])) {
 
         <?php
 
-          $semail=$_SESSION['seller'];
-           $sql="SELECT * FROM user WHERE user_email='$semail'";
-           $result=mysqli_query($conn,$sql);
-           $row=mysqli_fetch_array($result);
+            $semail=$_SESSION['seller'];
+            $sql="SELECT * FROM user WHERE user_email='$semail'";
+            $result=mysqli_query($conn,$sql);
+            $row=mysqli_fetch_array($result);
             $sname=$row['user_name'];
             $sid=$row['user_id'];
 
             $sql = "SELECT * FROM orders 
             INNER JOIN order_p ON orders.order_id=order_p.order_id
             INNER JOIN product ON product.product_id=order_p.order_item 
-            WHERE product.product_userid ='$sid' AND order_date = CURDATE() ORDER BY order_date DESC";
+            WHERE product.product_userid ='$sid' AND order_date = CURDATE() ORDER BY order_date DESC"; // order by date
             $result = mysqli_query($conn, $sql);
             $count = mysqli_num_rows($result);
-            
+            // sql for total order
             $sql = "SELECT * FROM orders
             INNER JOIN order_p ON orders.order_id=order_p.order_id 
             INNER JOIN product ON product.product_id=order_p.order_item 
             WHERE product.product_userid ='$sid' ORDER BY order_date DESC";
             $result = mysqli_query($conn, $sql);
             $tCount = mysqli_num_rows($result);
-
+            // sql for total product
             $sql = "SELECT * FROM product WHERE product.product_userid ='$sid';";
             $result = mysqli_query($conn, $sql);
             $pCount = mysqli_num_rows($result);
-
+            // sql for total revenue
             $sql = "SELECT  order_p.order_qu, product.product_price
             FROM order_p
             INNER JOIN orders ON orders.order_id=order_p.order_id
@@ -80,13 +81,13 @@ if (!isset($_SESSION['seller'])) {
             WHERE product.product_userid ='$sid'AND orders.order_date = CURDATE();";
             $result = mysqli_query($conn, $sql);
             $rev = 0;
-            while($row = mysqli_fetch_array($result)){
+            while($row = mysqli_fetch_array($result)){ // loop to store the data in an associative array.
                 $sum =  $row['product_price'] * $row['order_qu'];
             $rev += $sum;
             }
            
         ?>
-<!-----Card item show--->
+<!-----Card item show-------->
 <div>
     <p class="h4">Welcome <?php echo $sname?></p>
 </div>
@@ -160,9 +161,9 @@ if (!isset($_SESSION['seller'])) {
         </div>
     </div>
 </div>
-<!------------------ Recent five orders -->
-<div class="col-md-10 mx-auto d-flex" >
-    <div class="col-7 mx-auto">
+<!------------------ Recent five orders ------------------------------->
+<div class="col-md-10 mx-auto d-flex thide" >
+    <div class="col-7 mx-auto ">
     <div>
     <section class="intro">
     <div class="mask d-flex align-items-center h-100">
@@ -176,51 +177,45 @@ if (!isset($_SESSION['seller'])) {
                     <thead>
                         <tr>
                             <th align="center">Recent 5 Orders</th>
-
                         </tr>
                       <tr>
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Order Date</th>
                         <th scope="col">Status</th>
-            
                       </tr>
                     </thead>
                     <?php
-                      $semail=$_SESSION['seller'];
-                    $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
-                     $result=mysqli_query($conn,$sql);
-                     $row=mysqli_fetch_assoc($result);
-                      $user_id=$row['user_id'];
-
-                       $sql="SELECT * FROM orders 
-                       INNER JOIN order_p ON orders.order_id=order_p.order_id 
-                       INNER JOIN product ON product.product_id=order_p.order_item 
-                       INNER JOIN user ON user.user_id=orders.order_user 
-                       WHERE product.product_userid ='$user_id' ORDER BY orders.order_id DESC LIMIT 5  ";
+                        $semail=$_SESSION['seller'];
+                        $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
                         $result=mysqli_query($conn,$sql);
-                    while($row=mysqli_fetch_assoc($result)){
-                      $id=$row['order_id'];
-                      $user_name=$row['user_name'];
-                     $product_name=$row['product_name'];
-                     $product_quantity=$row['order_qu'];
-                     $order_date=$row['order_date'];
-                     $order_status=$row['order_status'];
-                     ?>
+                        $row=mysqli_fetch_assoc($result);
+                        $user_id=$row['user_id'];
+                        // sql for recent 5 orders
+                        $sql="SELECT * FROM orders 
+                        INNER JOIN order_p ON orders.order_id=order_p.order_id 
+                        INNER JOIN product ON product.product_id=order_p.order_item 
+                        INNER JOIN user ON user.user_id=orders.order_user 
+                        WHERE product.product_userid ='$user_id' ORDER BY orders.order_id DESC LIMIT 5  ";
+                        $result=mysqli_query($conn,$sql);
+                        while($row=mysqli_fetch_assoc($result)){ // while loop for recent 5 orders
+                            $id=$row['order_id'];
+                            $user_name=$row['user_name'];
+                            $product_name=$row['product_name'];
+                            $product_quantity=$row['order_qu'];
+                            $order_date=$row['order_date'];
+                            $order_status=$row['order_status'];
+                        ?>
                     <tbody>
-                      <tr>
-                        
-                      <td><?php echo $product_name ?></td>
-                     <td><?php echo $product_quantity ?> Pcs</td>
-                      <td><?php echo $order_date ?></td>
-                     <td><?php echo $order_status ?></td>
-                        
-                        
-                      </tr>
+                        <tr>
+                            <td><?php echo $product_name ?></td>
+                            <td><?php echo $product_quantity ?> Pcs</td>
+                            <td><?php echo $order_date ?></td>
+                            <td><?php echo $order_status ?></td>
+                        </tr>
                       <?php
                     }
                     ?>
-                      
                     </tbody>
                   </table>
                 </div>
@@ -232,18 +227,24 @@ if (!isset($_SESSION['seller'])) {
     </div>
 </section>
 </div>
-
-
-</div>
-<div class="col-4 mx-auto offset-1">
-<?php
-                    
-    include 'calender.php';
-   
-?>
-</div>
-</div>
-
-                        
-</body>
+    </div>
+            <div class="col-4 mx-auto offset-1">
+                <?php           
+                    include 'calender.php'; 
+                ?>
+            </div>
+        </div>
+                </div>                   
+    </body>
+    <style>
+        .thide{
+            display: block;
+        }
+        @media only screen and (max-width: 600px) {
+            .thide{
+                display: none!important;
+            }
+        }
+    </style>
+  
 </html>

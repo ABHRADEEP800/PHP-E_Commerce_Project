@@ -34,6 +34,7 @@ include 'database.php';
     ></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <link rel="stylesheet" href="asset/card.css" />
+    <link rel="stylesheet" href="asset/css/main.css" />
 </head>
 
 <?php
@@ -49,13 +50,22 @@ include 'database.php';
         </div>
     <div class="pt-5">
         <div class="d-flex pb-3">
-            <div class="col-6 ps-3">
+            <!-- <div class="col-6 ps-3">
                 <form action="message.php" method="POST">
                     <input type="text" name="search" placeholder="Search message by email">
                     <button type="submit" class="btn btn-primary" name="submit-search">Search</button>
                 </form>
-            </div>
+            </div> -->
+            <form action="message.php" method="POST">                    
+                <div class="d-flex">
+                    <input type="text" class="search_bar form-control border-end-0 border rounded-pill" name="search" required  placeholder="Search message by email"/>
+                    <button type="submit" class="btn btn-outline-secondary bg-white border-bottom-0 border rounded-pill mx-4" name="submit-search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
         </div>
+        <div class="table-responsive">
 
         <table class="table" border="1" >
             <tr>
@@ -67,32 +77,33 @@ include 'database.php';
             </tr>
             <?php
 
-                $limit = 5;
-                $page = isset($_GET['page']) ? $_GET['page'] : 1;
-                $start = ($page -1) * $limit;
+                $limit = 5; // Number of entries to show in a page.
+                $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get page number
+                $start = ($page -1) * $limit; // Starting number of the first record to show on the page
 
+                $result1 = $conn->query("SELECT count(product_id) AS product_id FROM product"); // Get the total number of records
+                $countAll = $result1->fetch_all(MYSQLI_ASSOC); 
 
+                $total = $countAll[0]['product_id']; // Get the total number of records
+                $pages = ceil($total / $limit); // Calculate total pages
 
-                $result1 = $conn->query("SELECT count(product_id) AS product_id FROM product");
-                $countAll = $result1->fetch_all(MYSQLI_ASSOC);
+                $previous = $page -1; // For previous page to go to
+                $next = $page +1; // For next page to go to
 
-                $total = $countAll[0]['product_id'];
-                $pages = ceil($total / $limit);
-
-                $previous = $page -1;
-                $next = $page +1;
-
+                // If it's the first page, don't show the previous link
                 if($previous==0){
                     $previous=1; 
                 }   
+                // If it's the last page, don't show the next link
                 if($next > $pages){
                     $next = $pages; 
                 }
-            
+            // If the search button is pressed
             if(isset($_POST['submit-search'])){
                 $search=mysqli_real_escape_string($conn,$_POST['search']);
                 $sql="SELECT * FROM contact WHERE email LIKE '%$search%' LIMIT $start, $limit";
             }
+            // If the search button is not pressed
             else{
                 $sql="SELECT * FROM contact LIMIT $start, $limit";
             }
@@ -116,24 +127,38 @@ include 'database.php';
             }
             ?>
         </table>
-        <div class="d-flex">
-            <div class="col-6">Showing <b><?php echo $page;?></b> out of <b><?php echo $pages;?></b> Pages</div>
-            <div class="col-6 d-flex justify-content-end">
-                <div class="">
-                    <ul class="pagination">
-
-                    <li class=""><a class="page-link" href="message.php?page=<?php echo $previous;?>">&laquo; Previous</a></li>
-                    <?php for($i =1; $i<= $pages; $i++): ?>
-                        
-                    <li class=""><a class="page-link" href="message.php?page=<?php echo $i;?>"><?php echo $i;?></a></li>
-
-                    <?php endfor; ?>
-                    <li class=""><a class="page-link" href="message.php?page=<?php echo $next;?>">&raquo; Next</a></li>
-                    
-                    </ul>
-                </div>
-            </div>
         </div>
+        <div class="container d-flex mt-5 pt-5">
+        <div class="col-6">Showing <b><?php echo $page;?></b> out of <b><?php echo $pages;?></b> Pages</div>
+        <div class="col-6 d-flex justify-content-end">
+          <div class="">
+              <ul class="pagination">
+                <!-- previous button -->
+                <li class=""><a class="page-link " href="message.php?page=<?php echo $previous;?>">&laquo; &laquo;</a></li>
+                  <?php
+                    // showing pagination
+                    if($page <= 2){
+                      $page = 1;
+                    }elseif($page >= $pages - 2){
+                      $page = $pages - 2;
+                    }
+                    // showing go to page buttons in loop
+                    for($i = $page; $i <= $page + 2; $i++): 
+                    if($i <= $pages){
+                      
+                    ?>
+                  <li class=""><a class="page-link" href="message.php?page=<?php echo $i;?>"><?php echo $i;?></a></li>
+
+                  <?php
+                        } // end of if
+                      endfor; // end of for loop
+                  ?>
+                  <!-- next button -->
+                <li class=""><a class="page-link" href="message.php?page=<?php echo $next;?>">&raquo; &raquo;</a></li>              
+              </ul>
+          </div>
+        </div>
+      </div>
     </div>
 
 <script>

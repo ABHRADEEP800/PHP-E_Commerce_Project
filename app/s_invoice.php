@@ -1,18 +1,14 @@
 <!---seller login check --->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['seller'])) { // Check if the user is logged in
+    header('location: /login.php'); // If user is not logged in then redirect him/her to login page
+  exit; // Quit the script
 }
-
-
+// Include the database config file
 include 'database.php';
 
 ?>
-
-
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -54,7 +50,7 @@ include 'database.php';
 				  filename:     'invoice.pdf',
 				  image:        { type: 'jpeg', quality: 0.98 },
 				  html2canvas:  { scale: 2 },
-				  jsPDF:        { unit: 'in', format: 'A4', orientation: 'landscape' }
+				  jsPDF:        { unit: 'in', format: 'A3', orientation: 'portrait' }
 				};
 				// Choose the element that our invoice is rendered in.
 				html2pdf().set(opt).from(element).save();
@@ -68,24 +64,24 @@ include 'database.php';
 
 <!---php for invoice data fetch --->
 <?php 
-include('database.php');
+      include('database.php');
 
-$id = $_GET['orderId'];
-$semail=$_SESSION['seller'];
-            $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
-            $result=mysqli_query($conn,$sql);
-            $row=mysqli_fetch_assoc($result);
-            $user_id=$row['user_id'];
-$sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_img, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id
-FROM orders
-INNER JOIN user ON user.user_id=orders.order_user
-INNER JOIN order_p ON order_p.order_id=orders.order_id
-INNER JOIN product ON product.product_id=order_p.order_item
-WHERE orders.order_id = '$id' AND  product.product_userid ='$user_id'";
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
+      $id = $_GET['orderId'];
+      $semail=$_SESSION['seller'];
+                  $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
+                  $result=mysqli_query($conn,$sql);
+                  $row=mysqli_fetch_assoc($result);
+                  $user_id=$row['user_id'];
 
-
+      // sql for invoice data fetch
+      $sql = "SELECT  user.user_name, user.user_email, product.product_name, product.product_img, order_p.order_qu, product.product_price, orders.order_date, orders.order_status, orders.order_id, orders.discount
+      FROM orders
+      INNER JOIN user ON user.user_id=orders.order_user
+      INNER JOIN order_p ON order_p.order_id=orders.order_id
+      INNER JOIN product ON product.product_id=order_p.order_item
+      WHERE orders.order_id = '$id' AND  product.product_userid ='$user_id'";
+      $result = mysqli_query($conn, $sql);
+      $row = mysqli_fetch_assoc($result);
 ?>
 <!---invoice data show--->
 
@@ -122,14 +118,15 @@ $row = mysqli_fetch_assoc($result);
           </div>
         </div>
         <?php
-        $mtotal=0;
-                        $sql="SELECT product.product_name, order_p.order_qu,product.product_img,product.product_price
-                        FROM order_p
-                        INNER JOIN product ON product.product_id=order_p.order_item
-                        WHERE order_p.order_id='$id' AND  product.product_userid ='$user_id'";
-                        $result=mysqli_query($conn,$sql);
-                        while($row1=mysqli_fetch_assoc($result)){
-                        ?>
+        // sql for invoice data fetch
+              $mtotal=0;
+              $sql="SELECT product.product_name, order_p.order_qu,product.product_img,order_p.price
+              FROM order_p
+              INNER JOIN product ON product.product_id=order_p.order_item
+              WHERE order_p.order_id='$id' AND  product.product_userid ='$user_id'";
+              $result=mysqli_query($conn,$sql);
+              while($row1=mysqli_fetch_assoc($result)){
+        ?>
         <div class="row my-2 mx-1 justify-content-center">
           <div class="col-md-2 mb-4 mb-md-0">
             <div class="
@@ -158,17 +155,18 @@ $row = mysqli_fetch_assoc($result);
           </div>
           <div class="col-md-3 mb-4 mb-md-0">
             <h5 class="mb-2">
-              <span class="align-middle">₹ <?=$row1['product_price']?>/ Per Product</span>
+              <span class="align-middle">₹ <?=$row1['price']?>/ Per Product</span>
             </h5>
           </div>
         </div>
+
         <?php
-        
-        $total=$row1['product_price']*$row1['order_qu'];
-        
+        // total price
+        $total=$row1['price']*$row1['order_qu'];
         $mtotal=$mtotal+$total;
         
        } ?>
+       
         <hr>
         <div class="row">
           <div class="col-xl-8">
@@ -178,9 +176,10 @@ $row = mysqli_fetch_assoc($result);
             <ul class="list-unstyled">
               <li class="text-muted ms-3"><span class="text-black me-4">Sub Total</span>₹ <?=$mtotal?></li>
               <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Shipping</span>₹0 </li>
+              <li class="text-muted ms-3 mt-2"><span class="text-black me-4">Discount</span><?=$row['discount']?> % </li>
             </ul>
             <p class="text-black float-start"><span class="text-black me-3"> Total Amount</span><span
-                style="font-size: 25px;">₹ <?=$mtotal?></span></p>
+                style="font-size: 25px;">₹ <?=$mtotal-($mtotal*$row['discount']/100)?></span></p>
           </div>
         </div>
       </div>

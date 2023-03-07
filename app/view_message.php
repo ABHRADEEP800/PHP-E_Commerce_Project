@@ -1,10 +1,10 @@
 <?php
-session_start();
-if (!isset($_SESSION['admin'])) {
-    header('location: /admin_login.php');
-  exit;
+session_start(); //start session
+if (!isset($_SESSION['admin'])) { //if admin is not logged in
+    header('location: /admin_login.php'); // Redirecting To Home Page
+  exit; // stop further executing, very important
 }
-
+// database connection
 include 'database.php';
 
 ?>
@@ -35,6 +35,7 @@ include 'database.php';
     ></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <link rel="stylesheet" href="asset/card.css" />
+    <link rel="stylesheet" href="asset/css/main.css" />
 </head>
 <?php
     include 'navbar.php';
@@ -42,6 +43,7 @@ include 'database.php';
 ?>
 <body>
 <?php
+// php for view message
         $id=$_GET['Id'];
         $sql="SELECT * FROM contact WHERE `id`='$id'";
         $result=mysqli_query($conn,$sql);
@@ -57,7 +59,7 @@ include 'database.php';
                 <div class="px-auto">
                     <h1 class="text-center">View Message</h1>
                 </div>
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12 " >
                     <div class="form-outline mb-4">
                         <label class="form-label" for="form4Example1">Email</label>
                         <input type="text" name="product_name" id="form4Example1" value="<?=$email?>" disabled class="form-control" />
@@ -85,6 +87,7 @@ include 'database.php';
         </div>
 
 <script>
+    // javascript for delete message
     function confirmDelete(){
         var result=confirm("Are you sure you want to delete this Message?");
         if(result){

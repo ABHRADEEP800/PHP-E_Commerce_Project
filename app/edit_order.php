@@ -65,7 +65,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     <h1 class="text-center">Edit Ordered Data</h1>
                 </div>
                 
-                <div class="flex mx-auto col-6 " >
+                <div class="flex mx-auto col-lg-6 col-sm-12" >
                     <div class="form-outline mb-4">
                         <label class="form-label h3" for="form4Example1">User Name</label>
                         <input type="text" disabled id="form4Example1" value="<?= $user_name ?>" class="form-control" />
@@ -82,6 +82,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                       <th>Quantity</th>
                 </tr>
                     <?php
+                        // get the order id from the url
                         $sql="SELECT product.product_name, order_p.order_qu
                          FROM order_p
                           INNER JOIN product ON product.product_id=order_p.order_item
@@ -116,7 +117,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </div>
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-4 mb-4">Update Order Status</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Update Order Status</button>
                 </div>
                 
             </form>
@@ -131,6 +132,7 @@ if(isset($_POST["update"])) {
     $order_status=$_POST['order_status'];
     $sql= "UPDATE orders SET  order_status ='$order_status' WHERE order_id ='$id';";
     mysqli_query($conn,$sql);
+    // redirect to the order management page
     echo'<script>
     window.location.href="order_mgmt.php";
     </script>';

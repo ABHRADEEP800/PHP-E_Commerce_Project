@@ -1,12 +1,11 @@
 <!---check seller login--->
 <?php
-session_start();
-if (!isset($_SESSION['seller'])) {
-    header('location: /login.php');
-  exit;
+session_start(); // Start the session
+if (!isset($_SESSION['seller'])) { // Check if the user is logged in
+    header('location: /login.php'); // If user is not logged in then redirect him/her to login page
+  exit; // Quit the script
 }
-
-
+// Include the database config file
 include 'database.php';
 
 ?>
@@ -46,6 +45,7 @@ include 'database.php';
 
 <!--- order data fetch--->
 <?php
+// Fetch the order data
  $semail=$_SESSION['seller'];
  $sql="SELECT * FROM `user` WHERE `user_email`='$semail'";
  $result=mysqli_query($conn,$sql);
@@ -61,10 +61,10 @@ include 'database.php';
          WHERE orders.order_id='$id' AND product.product_userid ='$user_id' ";
      $result=mysqli_query($conn,$sql);
 while ($row = mysqli_fetch_assoc($result)) {
-$id = $row['order_id'];
-$user_name = $row['user_name'];
-$order_date = $row['order_date'];
-$order_status = $row['order_status'];
+    $id = $row['order_id'];
+    $user_name = $row['user_name'];
+    $order_date = $row['order_date'];
+    $order_status = $row['order_status'];
 ?>
 <!----order data show--->
  <div class="container ">
@@ -73,7 +73,7 @@ $order_status = $row['order_status'];
              <h1 class="text-center">Edit Ordered Data</h1>
          </div>
          
-         <div class="flex mx-auto col-6 " >
+         <div class="flex mx-auto col-lg-6 col-sm-12" >
              <div class="form-outline mb-4">
                  <label class="form-label h3" for="form4Example1">User Name</label>
                  <input type="text" disabled id="form4Example1" value="<?= $user_name ?>" class="form-control" />
@@ -90,18 +90,18 @@ $order_status = $row['order_status'];
                <th>Quantity</th>
                   </tr>
                   <?php
+                  // Fetch the order data
                  $sql="SELECT product.product_name, order_p.order_qu
                   FROM order_p
                    INNER JOIN product ON product.product_id=order_p.order_item
                     WHERE order_p.order_id='$id' AND product.product_userid ='$user_id'";
-                    $result=mysqli_query($conn,$sql);
-                    while($row=mysqli_fetch_assoc($result)){
-                    $product_name=$row['product_name'];
-                    $product_quantity=$row['order_qu'];
-
+                        $result=mysqli_query($conn,$sql);
+                        while($row=mysqli_fetch_assoc($result)){
+                            $product_name=$row['product_name'];
+                            $product_quantity=$row['order_qu'];
                     echo" <tr>
-                   <td>$product_name</td>
-                  <td>$product_quantity Pcs</td>
+                    <td>$product_name</td>
+                    <td>$product_quantity Pcs</td>
                      </tr>";
                     }
                     ?>
@@ -112,10 +112,11 @@ $order_status = $row['order_status'];
                    <select name="order_status" class="form-select" aria-label="select example">
                          <option value="<?= $order_status ?>"><?= $order_status ?></option>
                          <?php
+                         // If the order status is placed, show the shipped option
                          if ($order_status == "Placed" || $order_status != "Delivered") {
                              echo "<option value='Shipped'>Shipped</option>";
                              echo "<option value='Delivered'>Delivered</option>";
-                         } else {
+                         } else { // If the order status is shipped, show the delivered option
                              echo "<option value='Delivered'>Delivered</option>";
                          }
 }
@@ -125,7 +126,7 @@ $order_status = $row['order_status'];
          </div>
                 <!-- Submit button -->
                 <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block col-4 mb-4">Update Order Status</button>
+                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Update Order Status</button>
                 </div>
             </form>
         </div>
@@ -134,6 +135,7 @@ $order_status = $row['order_status'];
         ?>
         <!----order data update--->
 <?php
+// Update the order data in the database
 if(isset($_POST["update"])) {
     $order_status=$_POST['order_status'];
     $sql= "UPDATE orders SET  order_status ='$order_status' WHERE order_id ='$id';";

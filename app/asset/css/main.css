@@ -1,0 +1,9 @@
+.drop_btn{
+    width: 90px!important;
+}
+
+@media only screen and (min-width: 200px) and (max-width: 567px) {
+    .container{
+        padding: 0px;
+    }
+}
