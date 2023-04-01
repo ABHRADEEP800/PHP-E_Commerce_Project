@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://grapple.abhradeep.com">
-    <img src="/assets/svg-logo/logo.svg" alt="Bloodorg logo" width="300" height="265">
+    <img src="https://grapple.abhradeep.com/assets/svg-logo/logo.svg" alt="Bloodorg logo" width="300" height="265">
   </a>
 </p>
 
