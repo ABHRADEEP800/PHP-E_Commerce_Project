@@ -1,6 +1,10 @@
 <?php
 session_start(); // Start the session
-include('database.php');
+require('../env/database.php');
+if (!isset($_SESSION['admin'])) {  // if admin is not logged in
+  header('location:  ../admin_login.php');
+exit;
+}
 
 
 $u_email = $_POST['user_email'];
@@ -8,6 +12,7 @@ $sql = "SELECT * FROM `user` WHERE `user_email` = '$u_email'"; // Check if email
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $u_id = $row['user_id'];
+$disc=$_POST['disc'];
 
 
 if($_SERVER["REQUEST_METHOD"]=="POST") // Check if form is submitted
@@ -36,7 +41,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST") // Check if form is submitted
         }
       }
       // Order Insert
-    $query1="INSERT INTO `orders`(`order_user`, `order_status`,`shipping_address`) VALUES ('$u_id','Placed','$caddress')";
+    $query1="INSERT INTO `orders`(`order_user`, `order_status`,`shipping_address`,`discount`) VALUES ('$u_id','Placed','$caddress','$disc')";
     if(mysqli_query($conn,$query1))
     {
       $Order_Id=mysqli_insert_id($conn);
@@ -70,7 +75,6 @@ if($_SERVER["REQUEST_METHOD"]=="POST") // Check if form is submitted
         }
         unset($_SESSION['cart']); // Empty the cart
         echo"<script>
-          alert('Order Placed');
           window.location.href='order_mgmt.php';
         </script>";
       }

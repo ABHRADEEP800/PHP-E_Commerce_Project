@@ -1,6 +1,11 @@
 <?php
+session_start(); 
+if (!isset($_SESSION['admin'])) {  // if admin is not logged in
+    header('location:  ../admin_login.php');
+  exit;
+}
     // Include the database configuration file
-    include 'database.php';
+    require('../env/database.php');
     $id = $_GET['cId'];          
     $sql = mysqli_query($conn,"DELETE FROM Coupon WHERE id='$id'");
     if($sql){

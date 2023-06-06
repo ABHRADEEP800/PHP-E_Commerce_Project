@@ -1,18 +1,17 @@
 <?php 
 session_start();
 
-// if user is not logged in, redirect to login page
-if(!isset($_SESSION['customer'])){
-  header("Location: login.php");
-  exit;
-}
-
 // check if form is submitted
 if($_SERVER["REQUEST_METHOD"]=="POST")
+{
+  // if user is not logged in, 
+if(isset($_SESSION['customer']))
 {
   // check if add to cart button is clicked
   if(isset($_POST['Add_To_Cart']))
   {
+  
+
     // check if cart is empty
     if(isset($_SESSION['cart']))
     {
@@ -20,10 +19,14 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
       $myitems=array_column($_SESSION['cart'],'product_id');
       if(in_array($_POST['product_id'],$myitems))
       {
-        echo"<script>
-          alert('Item Already Added');
-          window.location.href='index.php';
-        </script>";
+        $data[]=
+        [
+          'status'=>'already',
+          'cart_count'=>count($_SESSION['cart'])
+        ];
+        echo json_encode($data);
+
+
       }
       // if item is not added to cart
       else
@@ -31,20 +34,24 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
         // count number of items in cart
         $count=count($_SESSION['cart']);
         $_SESSION['cart'][$count]=array('product_id'=>$_POST['product_id'],'Quantity'=>1);
-        echo"<script>
-          alert('Item Added to Cart');
-          window.location.href='index.php';
-        </script>";
+        $data[]=
+        [
+          'status'=>'added',
+          'cart_count'=>count($_SESSION['cart'])
+        ];
+        echo json_encode($data);
       }
     }
     else
     {
       // add item to cart
       $_SESSION['cart'][0]=array('product_id'=>$_POST['product_id'],'Quantity'=>1);
-      echo"<script>
-        alert('Item Added to Cart');
-        window.location.href='index.php';
-      </script>";
+      $data[]=
+        [
+          'status'=>'added',
+          'cart_count'=>count($_SESSION['cart'])
+        ];
+        echo json_encode($data);
     }
   }
 
@@ -59,10 +66,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
       {
         unset($_SESSION['cart'][$key]);
         $_SESSION['cart']=array_values($_SESSION['cart']);
-        echo"<script>
-          alert('Item Removed');
-          window.location.href='cart.php';
-        </script>";
+        echo "item_removed";
       }
     }
   }
@@ -75,12 +79,19 @@ if($_SERVER["REQUEST_METHOD"]=="POST")
       if($value['product_id']==$_POST['product_id'])
       {
         $_SESSION['cart'][$key]['Quantity']=$_POST['Mod_Quantity'];
-        echo"<script>
-          window.location.href='cart.php';
-        </script>";
+        echo "item_modified";
       }
     }
   }
 }
-
+else
+{
+  $data[]=
+  [
+    'status'=>'not_login',
+    'cart_count'=>'no'
+  ];
+  echo json_encode($data);
+}
+}
 ?>

@@ -1,8 +1,11 @@
 <?php
 session_start();
+if(!isset($_SESSION['customer'])){
+  header("Location: login.php");
+}
 
 // including database connection file
-include('database.php');
+require('env/database.php');
 
 // taking user email from session
 $u_email = $_SESSION['customer'];

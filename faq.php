@@ -1,39 +1,45 @@
 <?php
 session_start();
-include 'database.php';
+require('env/database.php');
 ?>
 
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>FAQ</title>
-    <link rel="icon" type="image/x-icon" href="assets/svg-logo/logo1.svg">
+    <link rel="icon" type="image/x-icon" href="assets/svg-logo/logo-bg.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script
-      src="https://kit.fontawesome.com/db79afedbd.js"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://kit.fontawesome.com/db79afedbd.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="assets/css/main.css" />
-  </head>
+</head>
+
 <body>
+    <!-- ----------------------------------------------------Loading Screen-------------------------------------------------------- -->
+    <div id="loading">
+        <img src="assets/svg-logo/LOADER.svg" alt="Loading..." />
+    </div>
+    <script>
+        var loader = document.getElementById("loading");
+        window.addEventListener("load", function() {
+            loader.style.display = "none";
+        })
+    </script>
     <!-----------------------header ------------------->
-	<?php
-        // including header
-        include 'header.php';
+    <?php
+    // including header
+    include 'header.php';
     ?>
     <div class="container ">
         <div class="card">
             <div class="card-body">
                 <h1>FAQ</h1>
-                <main>    
+                <main>
                     <section class="faq">
                         <h2>Shipping</h2>
                         <ul>
@@ -75,13 +81,12 @@ include 'database.php';
 
     <!------------------------------ footer -------------------->
     <?php
-        // including footer
-        include 'footer.php';
+    // including footer
+    include 'footer.php';
     ?>
 </body>
 
 <style>
-
     /* css for faq page */
     body {
         font-family: Arial, sans-serif;
@@ -123,6 +128,6 @@ include 'database.php';
     p {
         margin: 0;
     }
-
 </style>
+
 </html>

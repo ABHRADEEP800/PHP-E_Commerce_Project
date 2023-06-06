@@ -1,197 +1,258 @@
 <?php
 session_start(); // Start the session
 if (!isset($_SESSION['admin'])) { // If no session value is present, redirect the user:
-    header('location: /admin_login.php');
-  exit;
+    header('location:  ../admin_login.php');
+    exit;
 }
-include 'database.php'; // Include the database connection.
+require('../env/database.php'); // Include the database connection.
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
-    />
+    <link rel="icon" type="image/x-icon" href="asset/image/logo-bg.svg">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" />
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script
-      src="https://kit.fontawesome.com/db79afedbd.js"
-      crossorigin="anonymous"
-    ></script>
+    <script src="https://kit.fontawesome.com/db79afedbd.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css"/>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"
-    ></script>
-    <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-    ></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <link rel="stylesheet" href="asset/card.css" />
+    <link rel="stylesheet" href="../assets/css/main.css" />
+    <link rel="stylesheet" href="asset/css/main.css" />
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 
 <?php
-    include 'navbar.php';
-    include 'database.php';     
+include 'navbar.php';
 ?>
 
 <body>
-<?php
-      // product edit
-        $id=$_GET['productId'];
-        $sql="SELECT * FROM product WHERE product_id=$id";
-        $result=mysqli_query($conn,$sql);
-        $row=mysqli_fetch_assoc($result);
-           
-            $name=$row['product_name'];
-            $image=$row['product_img'];
-            $description=$row['product_description'];
-            $category=$row['product_category'];
-            $price=$row['product_price'];
-            $quantity=$row['product_qu'];
-            $sql="SELECT * FROM category WHERE c_id=$category";
-            $result=mysqli_query($conn,$sql);
-            $row=mysqli_fetch_assoc($result);
-            $p_category=$row['c_name'];
-        ?>
+    <!-- ----------------------------------------------------Loading Screen-------------------------------------------------------- -->
+    <div id="loading">
+        <img src="asset/svg-logo/LOADER.svg" alt="Loading..." />
+    </div>
+    <script>
+        var loader = document.getElementById("loading");
+        window.addEventListener("load", function() {
+            loader.style.display = "none";
+        })
+    </script>
 
-        <div class="container ">
-            <form method="post" enctype="multipart/form-data">
-                <div class="px-auto">
-                    <h1 class="text-center"  >Edit Product</h1>
-                </div>
-                <!-- image -->
-                <div class="mt-2 d-flex justify-content-center">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <img src="<?php echo $image; ?>" alt="" class="img-fluid">
-                            </div>
+    <?php
+    // product edit
+    $id = $_GET['productId'];
+    $sql = "SELECT * FROM product WHERE product_id=$id";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+
+    $name = $row['product_name'];
+    $image = $row['product_img'];
+    $description = $row['product_description'];
+    $category = $row['product_category'];
+    $price = $row['product_price'];
+    $quantity = $row['product_qu'];
+    $sql = "SELECT * FROM category WHERE c_id=$category";
+    $result = mysqli_query($conn, $sql);
+    $row = mysqli_fetch_assoc($result);
+    $p_category = $row['c_name'];
+    ?>
+
+    <div class="container ">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="px-auto">
+                <h1 class="text-center">Edit Product</h1>
+            </div>
+            <!-- image -->
+            <div class="mt-2 d-flex justify-content-center">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <img src="<?php echo "../" . $image; ?>" alt="" class="img-fluid">
                         </div>
                     </div>
                 </div>
-                
-                <div class="flex mx-auto col-lg-6 col-sm-12 " >
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example1">Product Name</label>
-                        <input type="text" name="product_name" id="form4Example1" value="<?=$name?>" class="form-control" />
-                    </div>
+            </div>
 
-                   
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example2">Price</label>
-                        <input type="text" name="product_price" id="form4Example2" value="<?=$price?>" class="form-control" />
-                        
-                    </div>
-
-                   
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example3">Description</label>
-                        <input class="form-control" name="product_description" id="form4Example3" value="<?=$description?>" rows="4"></input>
-                    </div>
-
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example3">Quantity(Pcs)</label>
-                        <input class="form-control" name="product_qu" id="form4Example3" value="<?= $quantity?>" rows="4"></input>
-                    </div>
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="form4Example3">Product Category</label>
-                          <select name="ptype" class="form-select" aria-label="select example">
-                                <option value="<?=$category?>"><?=$p_category?></option>
-                                <?php
-                                    // category dropdown
-                                    $sql="SELECT * FROM category";
-                                    $result=mysqli_query($conn,$sql);
-                                    while($row=mysqli_fetch_assoc($result)){
-                                        $c_name=$row['c_name'];
-                                        $c_id=$row['c_id'];
-                                        if ($c_id==$category) {
-                                            continue;
-                                        }
-                                        echo "<option value='$c_id'>$c_name</option>";
-                                    }
-                                ?>
-                          </select>
-                    </div>
+            <div class="flex mx-auto col-lg-6 col-sm-12 ">
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example1">Product Name</label>
+                    <input type="text" name="product_name" id="form4Example1" value="<?= $name ?>" class="form-control" />
                 </div>
-                <!-- file upload -->
-                <div class="d-flex pt-1 justify-content-center">
-                    
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body ">
+
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example2">Price</label>
+                    <input type="text" name="product_price" id="form4Example2" value="<?= $price ?>" class="form-control" />
+
+                </div>
+
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example3">Description</label>
+                    <input class="form-control" name="product_description" id="form4Example3" value="<?= $description ?>" rows="4"></input>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example3">Quantity(Pcs)</label>
+                    <input class="form-control" name="product_qu" id="form4Example3" value="<?= $quantity ?>" rows="4"></input>
+                </div>
+                <div class="form-outline mb-4">
+                    <label class="form-label" for="form4Example3">Product Category</label>
+                    <select name="ptype" class="form-select" aria-label="select example">
+                        <option value="<?= $category ?>"><?= $p_category ?></option>
+                        <?php
+                        // category dropdown
+                        $sql = "SELECT * FROM category";
+                        $result = mysqli_query($conn, $sql);
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $c_name = $row['c_name'];
+                            $c_id = $row['c_id'];
+                            if ($c_id == $category) {
+                                continue;
+                            }
+                            echo "<option value='$c_id'>$c_name</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <!-- file upload -->
+            <div class="d-flex pt-1 justify-content-center">
+
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body ">
                             <label class="form-label d-flex justify-content-center" for="form4Example3">Change Image</label>
-                                <input type="file" name="fileToUpload" class="form-control">
-                            </div>
+                            <input type="file" name="fileToUpload" class="form-control">
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Submit button -->
-                <div class="d-flex justify-content-center">
-                    <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Update</button>
-                </div>
-                
-            </form>
-        </div>
-    
-        <?php
-            
-        ?>
+            <!-- Submit button -->
+            <div class="d-flex justify-content-center">
+                <button type="submit" name="update" class="btn btn-primary btn-block  mb-4">Update</button>
+            </div>
 
-<?php
-// Check 
-if(isset($_POST["update"])) { 
-  $p_cat=$_POST["ptype"];
-  $target_dir = "product/"; 
-  $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]); // image name
-  $uploadOk = 1; 
-  $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION)); // image type
-  $product_name=$_POST["product_name"];
-    $product_price=$_POST["product_price"];
-    $product_description=$_POST["product_description"];
-    $product_qu=$_POST["product_qu"];
-    $product_img=$image;
-    
-  // Check if file already exists
-  if (file_exists($target_file)) {
-    echo "Sorry, file already exists.";
-    $uploadOk = 0;
-  }
-  // Check file size
-  if ($_FILES["fileToUpload"]["size"] > 500000) {
-    echo "Sorry, your file is too large.";
-    $uploadOk = 0;
-  }
-  // Allow certain file formats
-  if($fileType != "png" && $fileType != "jpeg" && $fileType != "jpg") {
-    echo "Sorry, only PNG, JPEG & JPG files are allowed.";
-    $uploadOk = 0;
-  }
-  // Check if $uploadOk is set to 0 by an error
-  if ($uploadOk == 0) {
-    echo "Sorry, your file was not uploaded.";
-  // if everything is ok, try to upload file
-  } else {
-    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-        $product_img=$target_file;
-    } else {
-      echo "Sorry, there was an error uploading your file.";
+        </form>
+    </div>
+
+    <?php
+    // Check if image file is a actual image or fake image
+    if (isset($_POST["update"])) {
+
+        $p_cat = $_POST["ptype"];
+
+        $file_name = $_FILES['fileToUpload']['name']; // Get the file name
+        $target_dir = "product/"; // Set the destination folder
+        $file_ext = pathinfo($file_name, PATHINFO_EXTENSION); // Get the file extension
+        $target_file = $target_dir . RandomString(20) . "_" . date("jmYHis") . "." . $file_ext; // Set the file path & name
+        $uploadOk = 1; // Set the flag
+        $fileType = strtolower(pathinfo($file_name, PATHINFO_EXTENSION)); // Get the file extension
+        $product_name = $_POST["product_name"]; // Get the product name
+        $product_price = $_POST["product_price"];
+        $product_description = $_POST["product_description"]; // Get the product Description
+        $product_qu = $_POST["product_qu"]; // Get the product Quantity
+        $product_img = $image;
+        //check if file is uploaded or not
+        if (!empty($_FILES["fileToUpload"]["name"])) {
+            // Check if file already exists
+            if (file_exists($target_file)) {
+                echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['error']('Sorry, file already exists!'); 
+                    </script>";
+                $uploadOk = 0;
+            }
+            // Check file size
+            if ($_FILES["fileToUpload"]["size"] > 5000000) {
+                echo "<script>
+                            toastr.options.closeButton = true;
+                            toastr.options.progressBar = true;
+                            toastr['error']('Sorry, your file is too large!'); 
+                        </script>";
+                $uploadOk = 0;
+            }
+            // Allow certain file formats
+            if ($fileType != "png" && $fileType != "jpeg" && $fileType != "jpg") {
+                echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['error']('Sorry, only PNG, JPEG & JPG files are allowed!'); 
+                    </script>";
+                $uploadOk = 0;
+            }
+            // Check if $uploadOk is set to 0 by an error
+            if ($uploadOk == 0) {
+                echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['error']('Sorry, your file was not uploaded!'); 
+                    </script>";
+                // if everything is ok, try to upload file
+            } else {
+                if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], "../" . $target_file)) {
+                    $product_img = $target_file;
+                } else {
+                    echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['error']('Sorry, there was an error uploading your file!'); 
+                    </script>";
+                    $uploadOk = 0;
+                }
+            }
+        }
+        if ($uploadOk == 1) {
+            $sql = "UPDATE product SET product_name='$product_name', product_price='$product_price', product_description='$product_description', product_img='$product_img', product_qu='$product_qu', product_category='$p_cat' WHERE product_id='$id'";
+            $result = mysqli_query($conn, $sql);
+            if ($result) {
+                echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['success']('Product Updated Successfully');
+                        setTimeout(function(){ window.location.href='product_mgmt.php'; }, 5000);
+                        </script>";
+            } else {
+                echo "<script>
+                        toastr.options.closeButton = true;
+                        toastr.options.progressBar = true;
+                        toastr['error']('Product Not Updated!'); 
+                        </script>";
+            }
+        } else {
+            echo "<script>
+                    toastr.options.closeButton = true;
+                    toastr.options.progressBar = true;
+                    toastr['error']('Sorry, there was an error uploading your file!'); 
+                    </script>";
+        }
     }
-  }
-  $sql= "UPDATE product SET  product_name ='$product_name' , product_price='$product_price',product_description ='$product_description',product_img='$product_img', product_qu='$product_qu', product_category='$p_cat'  WHERE product_id ='$id';";
-      mysqli_query($conn,$sql);
-      echo'<script>
-      window.location.href="product_mgmt.php";
-      </script>';
-}
-?>
+
+    // random string function
+    function RandomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+    ?>
 
 </body>
+
 </html>
