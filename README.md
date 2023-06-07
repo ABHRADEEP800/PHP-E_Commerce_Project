@@ -1,23 +1,23 @@
 <p align="center">
   <a href="https://grapple.abhradeep.com">
-    <img src="https://grapple.abhradeep.com/assets/svg-logo/logo.svg" alt="Bloodorg logo" width="300" height="265">
+    <img src="https://grapple.abhradeep.com/assets/svg-logo/logo.svg" alt="Grapple Logo" width="300" height="265">
   </a>
 </p>
 
-# Grapple Inc. - E-Commerce Website
+# Grapple - E-Commerce
 
-This is a project for e-commerce website. This project is developed using PHP and MySQL. The project is build using MVC architecture. The project is developed by Grapple Inc. team.
+Introducing Grapple, your premier destination for the ultimate online shopping experience! Grapple is an innovative e-commerce platform developed as a major project for the final semester of our college journey. With meticulous planning, cutting-edge technology, and a passion for excellence, we present to you a one-of-a-kind shopping destination that will leave you captivated.
 
-## Technologies used
+### `Technologies used`
 
-- PHP
-- MySQL
-- HTML
-- CSS
-- Bootstrap
-- JavaScript
+- ![PHP](https://img.shields.io/badge/php-%23777BB4.svg?style=for-the-badge&logo=php&logoColor=white)
+- ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=flat-square&logo=mysql&logoColor=white)
+- ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+- ![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+- ![Bootstrap](https://img.shields.io/badge/bootstrap-%23563D7C.svg?style=for-the-badge&logo=bootstrap&logoColor=white)
+- ![Javascript](https://img.shields.io/badge/JavaScript-323330?style=flat-square&logo=javascript&logoColor=F7DF1E")
 
-## Features
+### `Features`
 
 The platform provides the following features:
 
@@ -33,18 +33,18 @@ The platform provides the following features:
 - Product reviews and ratings
 - Order tracking and history
 
-## Installation
+### `Installation`
 
 To install the project, follow these steps:
 
-1. Clone the project repository:
+1. Clone the project repository & save it in folder name `project` for Convenience:
 
 ```bash
     git clone https://github.com/ABHRADEEP800/PHP-E_Commerce_Project.git
 ```
-2. Import the db.sql file into your MySQL database.
+2. Create a `env` folder & copy `example.env/` files to `env/` folder.
 
-3. Update the database connection details in the database.php file.
+3. Change database and smtp configurations
 
 4. Start the PHP development server using XAMPP or any other server.
 
@@ -53,7 +53,7 @@ To install the project, follow these steps:
 ```
 5. Open your web browser and navigate to http://localhost/project/ to access the project.
 
-## Contributors
+### `Contributors`
 
 This project is currently being developed and maintained by:
 
@@ -63,11 +63,11 @@ This project is currently being developed and maintained by:
 - [Azhar Ali](https://github.com/aliaazhar)
 - [Aloke Chowdhury](https://github.com/aloksir)
 
-## License
+### `License`
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
 
-## How to Contribute
+### `How to Contribute`
 
 If you want to contribute to this project, follow these steps:
 
@@ -97,28 +97,25 @@ If you want to contribute to this project, follow these steps:
 
 Alternatively see the GitHub documentation on [creating a pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request).
 
-## Support
+### `Support`
 
 If you encounter any issues with the project or have any suggestions for improvements, please create a new issue in the project repository.
 
-## Contact
+### `Contact`
 
 If you want to contact us, you can reach us at:
 
 - hello@abhradeep.com
 
-## Conclusion
+### `Conclusion`
 
-We hope that this project will make it easier for people to find donors for organ and blood donations. Thank you for your interest in our project!
+In conclusion, the development of Grapple as our major project for the final semester of college has been an incredible journey filled with learning, creativity, and teamwork.
 
-## Project Status
+### `Project Status`
 
 This project is currently in development. We are planning to add the following features in the future:
 
-- [ ] Add a payment gateway
-- [ ] Add a chatbot
 - [ ] Add a blog
-- [ ] Add a forum
+- [ ] Add a Newsletter
 - [ ] Add a wishlist
 - [ ] Add a product comparison feature
-- [ ] Add a product recommendation feature
